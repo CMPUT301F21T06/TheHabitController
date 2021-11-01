@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/home2">
+
+    <fragment
+        android:id="@+id/home2"
+        android:name="com.example.thehabitcontroller_project.home"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/habits"
+        android:name="com.example.thehabitcontroller_project.Habits"
+        android:label="fragment_habits"
+        tools:layout="@layout/fragment_habits" />
+    <fragment
+        android:id="@+id/community"
+        android:name="com.example.thehabitcontroller_project.Community"
+        android:label="fragment_community"
+        tools:layout="@layout/fragment_community" />
+    <fragment
+        android:id="@+id/events"
+        android:name="com.example.thehabitcontroller_project.Events"
+        android:label="fragment_events"
+        tools:layout="@layout/fragment_events" />
+</navigation>
