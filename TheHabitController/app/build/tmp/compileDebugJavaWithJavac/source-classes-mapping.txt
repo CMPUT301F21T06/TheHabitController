@@ -1,0 +1,12 @@
+com/example/thehabitcontroller_project/Community.java
+ com.example.thehabitcontroller_project.Community
+com/example/thehabitcontroller_project/MainActivity.java
+ com.example.thehabitcontroller_project.MainActivity
+com/example/thehabitcontroller_project/BuildConfig.java
+ com.example.thehabitcontroller_project.BuildConfig
+com/example/thehabitcontroller_project/Habits.java
+ com.example.thehabitcontroller_project.Habits
+com/example/thehabitcontroller_project/Events.java
+ com.example.thehabitcontroller_project.Events
+com/example/thehabitcontroller_project/home.java
+ com.example.thehabitcontroller_project.home
