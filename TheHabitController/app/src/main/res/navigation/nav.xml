@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/home2"
-        android:name="com.example.thehabitcontroller_project.home"
+        android:name="com.example.thehabitcontroller_project.HomeFragmentActivity"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/habits"
-        android:name="com.example.thehabitcontroller_project.Habits"
+        android:name="com.example.thehabitcontroller_project.HabitsFragmentActivity"
         android:label="fragment_habits"
         tools:layout="@layout/fragment_habits" >
         <action
@@ -27,13 +27,13 @@
 
     <fragment
         android:id="@+id/community"
-        android:name="com.example.thehabitcontroller_project.Community"
+        android:name="com.example.thehabitcontroller_project.CommunityFragmentActivity"
         android:label="fragment_community"
         tools:layout="@layout/fragment_community" />
 
     <fragment
         android:id="@+id/events"
-        android:name="com.example.thehabitcontroller_project.Events"
+        android:name="com.example.thehabitcontroller_project.EventsFragmentActivity"
         android:label="fragment_events"
         tools:layout="@layout/fragment_events" >
         <action
