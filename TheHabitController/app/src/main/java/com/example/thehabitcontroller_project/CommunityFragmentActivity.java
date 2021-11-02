@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Community#newInstance} factory method to
+ * Use the {@link CommunityFragmentActivity#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Community extends Fragment {
+public class CommunityFragmentActivity extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,7 +24,7 @@ public class Community extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Community() {
+    public CommunityFragmentActivity() {
         // Required empty public constructor
     }
 
@@ -37,8 +37,8 @@ public class Community extends Fragment {
      * @return A new instance of fragment Community.
      */
     // TODO: Rename and change types and number of parameters
-    public static Community newInstance(String param1, String param2) {
-        Community fragment = new Community();
+    public static CommunityFragmentActivity newInstance(String param1, String param2) {
+        CommunityFragmentActivity fragment = new CommunityFragmentActivity();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
