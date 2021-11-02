@@ -9,20 +9,35 @@
         android:id="@+id/home2"
         android:name="com.example.thehabitcontroller_project.home"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home2_to_Habits2"
+            app:destination="@id/habits" />
+    </fragment>
+
     <fragment
         android:id="@+id/habits"
         android:name="com.example.thehabitcontroller_project.Habits"
         android:label="fragment_habits"
-        tools:layout="@layout/fragment_habits" />
+        tools:layout="@layout/fragment_habits" >
+        <action
+            android:id="@+id/action_habits_to_events2"
+            app:destination="@id/events" />
+    </fragment>
+
     <fragment
         android:id="@+id/community"
         android:name="com.example.thehabitcontroller_project.Community"
         android:label="fragment_community"
         tools:layout="@layout/fragment_community" />
+
     <fragment
         android:id="@+id/events"
         android:name="com.example.thehabitcontroller_project.Events"
         android:label="fragment_events"
-        tools:layout="@layout/fragment_events" />
+        tools:layout="@layout/fragment_events" >
+        <action
+            android:id="@+id/action_events_to_community2"
+            app:destination="@id/community" />
+    </fragment>
 </navigation>

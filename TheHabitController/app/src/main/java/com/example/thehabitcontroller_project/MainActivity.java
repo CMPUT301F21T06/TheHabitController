@@ -14,15 +14,19 @@ import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
-
+    BottomNavigationView bottomNavigationView;
+    NavController navController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setUpNavigation();
+    }
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+    public void setUpNavigation() {
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView2);
-        NavController navController = navHostFragment.getNavController();
+        navController = navHostFragment.getNavController();
         //For changing title
         //AppBarConfiguration appBarConfiguration = new AppBarConfiguration(R.id.home, R.id.events,R.id.habits,R.id.community).build();
         NavigationUI.setupWithNavController(bottomNavigationView, navController);

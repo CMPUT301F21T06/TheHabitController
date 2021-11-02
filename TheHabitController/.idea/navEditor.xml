@@ -8,13 +8,34 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
+                  <entry key="Habits">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-1117" />
+                            <option name="y" value="-339" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_habits_to_events">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="community">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-688" />
-                            <option name="y" value="37" />
+                            <option name="x" value="-1124" />
+                            <option name="y" value="325" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -25,21 +46,18 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-861" />
-                            <option name="y" value="36" />
+                            <option name="x" value="-1115" />
+                            <option name="y" value="-11" />
                           </Point>
                         </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="habits">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="-1044" />
-                            <option name="y" value="36" />
-                          </Point>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_events_to_community">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -49,9 +67,18 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-1210" />
-                            <option name="y" value="36" />
+                            <option name="x" value="-1393" />
+                            <option name="y" value="-8" />
                           </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_home2_to_habits">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
