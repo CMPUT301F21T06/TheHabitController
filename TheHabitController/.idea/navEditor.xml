@@ -8,23 +8,14 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
-                  <entry key="Habits">
+                  <entry key="addHabitActivity">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-1117" />
-                            <option name="y" value="-339" />
+                            <option name="x" value="-854" />
+                            <option name="y" value="-401" />
                           </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_habits_to_events">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -34,8 +25,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-1124" />
-                            <option name="y" value="325" />
+                            <option name="x" value="-1080" />
+                            <option name="y" value="392" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -46,13 +37,25 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-1115" />
-                            <option name="y" value="-11" />
+                            <option name="x" value="-1063" />
+                            <option name="y" value="4" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="habits">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-1161" />
+                            <option name="y" value="-402" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_events_to_community">
+                            <entry key="action_habits_to_addHabitActivity">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -67,13 +70,23 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-1393" />
-                            <option name="y" value="-8" />
+                            <option name="x" value="-1425" />
+                            <option name="y" value="-16" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_home2_to_habits">
+                            <entry key="action_home2_to_Habits2">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_home2_to_community">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_home2_to_events">
                               <value>
                                 <LayoutPositions />
                               </value>
