@@ -13,6 +13,12 @@
         <action
             android:id="@+id/action_home2_to_Habits2"
             app:destination="@id/habits" />
+        <action
+            android:id="@+id/action_home2_to_events"
+            app:destination="@id/events" />
+        <action
+            android:id="@+id/action_home2_to_community"
+            app:destination="@id/community" />
     </fragment>
 
     <fragment
@@ -20,9 +26,12 @@
         android:name="com.example.thehabitcontroller_project.HabitsFragmentActivity"
         android:label="fragment_habits"
         tools:layout="@layout/fragment_habits" >
+        <argument
+            android:name="addHabit"
+            app:argType="com.example.thehabitcontroller_project.Habit"/>
         <action
-            android:id="@+id/action_habits_to_events2"
-            app:destination="@id/events" />
+            android:id="@+id/action_habits_to_addHabitActivity"
+            app:destination="@id/addHabitActivity" />
     </fragment>
 
     <fragment
@@ -35,9 +44,14 @@
         android:id="@+id/events"
         android:name="com.example.thehabitcontroller_project.EventsFragmentActivity"
         android:label="fragment_events"
-        tools:layout="@layout/fragment_events" >
+        tools:layout="@layout/fragment_events" />
+    <fragment
+        android:id="@+id/addHabitActivity"
+        android:name="com.example.thehabitcontroller_project.AddHabitFragmentActivity"
+        android:label="fragment_add_habit_activity"
+        tools:layout="@layout/fragment_add_habit_activity" >
         <action
-            android:id="@+id/action_events_to_community2"
-            app:destination="@id/community" />
+            android:id="@+id/action_addHabitActivity_to_habits"
+            app:destination="@id/habits" />
     </fragment>
 </navigation>
