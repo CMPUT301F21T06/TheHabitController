@@ -7,7 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Event implements Parcelable {
-    private String habit;
+    private String title;
     private String comment; // optional comment up to 20 characters
     private Date date;
     private Location location;
@@ -18,7 +18,7 @@ public class Event implements Parcelable {
     }
 
     public Event(String habit, String comment, Location location, String bitmapString, Date dateEvent) {
-        this.habit = habit;
+        this.title = habit;
         this.comment = comment;
         this.date = date;
         this.location = location;
@@ -26,7 +26,7 @@ public class Event implements Parcelable {
     }
 
     protected Event(Parcel in) {
-        habit = in.readString();
+        title = in.readString();
         comment = in.readString();
         date = new Date(in.readLong());
         // location =
@@ -45,12 +45,12 @@ public class Event implements Parcelable {
         }
     };
 
-    public String getHabit() {
-        return habit;
+    public String getTitle() {
+        return title;
     }
 
-    public void setHabit(String habit) {
-        this.habit = habit;
+    public void setTitle(String habit) {
+        this.title = habit;
     }
 
     public String getComment() {
@@ -92,7 +92,7 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(habit);
+        parcel.writeString(title);
         parcel.writeString(comment);
         parcel.writeLong(date.getTime());
         location.writeToParcel(parcel, i);
