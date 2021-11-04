@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1058603496011",
+    "project_id": "habitcontrollerfirestore",
+    "storage_bucket": "habitcontrollerfirestore.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058603496011:android:9a4468680d70e0072753ce",
+        "android_client_info": {
+          "package_name": "com.example.thehabitcontroller_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1058603496011-mqkm84qhblc49l11so58l89pgfuu8jl4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCniW11g-iy0s6vsiUfoCkiIUo6Sar6wCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1058603496011-mqkm84qhblc49l11so58l89pgfuu8jl4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
