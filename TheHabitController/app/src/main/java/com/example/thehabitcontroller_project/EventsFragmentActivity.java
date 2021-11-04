@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link EventsFragmentActivity#newInstance} factory method to
+ * Use the {@link EventsFragmentActivity   //#newInstance} factory method to //commented out to fix error for now
  * create an instance of this fragment.
  */
 public class EventsFragmentActivity extends Fragment {
@@ -128,7 +128,7 @@ public class EventsFragmentActivity extends Fragment {
         usersCr.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                evenList.clear();
+                eventList.clear();
                 for (DocumentSnapshot doc : value.getDocuments()) {
                     eventList.add(doc.toObject(Event.class));
                 }
