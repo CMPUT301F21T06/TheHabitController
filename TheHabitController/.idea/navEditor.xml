@@ -17,6 +17,15 @@
                             <option name="y" value="-401" />
                           </Point>
                         </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_addHabitActivity_to_habits">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                       </LayoutPositions>
                     </value>
                   </entry>
@@ -28,6 +37,27 @@
                             <option name="x" value="-1080" />
                             <option name="y" value="392" />
                           </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="editHabitFragmentActivity">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-856" />
+                            <option name="y" value="-727" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_editHabitFragmentActivity_to_habits">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -56,6 +86,11 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_habits_to_addHabitActivity">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_habits_to_editHabitFragmentActivity">
                               <value>
                                 <LayoutPositions />
                               </value>

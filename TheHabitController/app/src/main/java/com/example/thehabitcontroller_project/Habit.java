@@ -3,9 +3,11 @@ package com.example.thehabitcontroller_project;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
-public class Habit implements Parcelable {
+public class Habit implements Parcelable, Comparable<Habit>{
     private String title;
     private String reason;
     private Date dateStart;
@@ -69,6 +71,11 @@ public class Habit implements Parcelable {
         return isPublic;
     }
 
+    public String getFormattedDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.US);
+        return formatter.format(dateStart);
+    }
+
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
     }
@@ -84,5 +91,10 @@ public class Habit implements Parcelable {
         parcel.writeString(reason);
         parcel.writeLong(dateStart.getTime());
         parcel.writeBoolean(isPublic);
+    }
+
+    @Override
+    public int compareTo(Habit habit) {
+        return title.compareTo(habit.getTitle());
     }
 }
