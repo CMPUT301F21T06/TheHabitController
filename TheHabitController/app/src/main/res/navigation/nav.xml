@@ -67,7 +67,7 @@
         android:id="@+id/addHabitActivity"
         android:name="com.example.thehabitcontroller_project.AddHabitFragmentActivity"
         android:label="fragment_add_habit_activity"
-        tools:layout="@layout/fragment_add_habit_activity" >
+        tools:layout="@layout/fragment_add_habit_activity" />
         <action
             android:id="@+id/action_addHabitActivity_to_habits"
             app:destination="@id/habits" />
