@@ -34,11 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Steven
- * @version 1.0.0
- *
  * A {@link Fragment} subclass to show the current {@link Habit}s of the user
  * This class links with {@link FirebaseFirestore} in order to store, pull and update its data
+ *
+ * @author Steven
+ * @version 1.0.0
  */
 public class HabitsFragmentActivity extends Fragment {
 
