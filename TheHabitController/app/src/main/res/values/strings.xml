@@ -12,4 +12,13 @@
     <string name="habitPublicCheckBox">Is Public</string>
     <string name="saveHabitButtonName">Save</string>
     <string name="deleteHabitButtonName">Delete</string>
+
+    <string name="addEventCommentHint">Add a Comment</string>
+    <string name="eventStartDateHint">Event Date</string>
+    <string name="eventStartDateButton">Event Date</string>
+    <string name="addEventButtonName">Add</string>
+    <string name="cancelAddEventButtonName">Cancel</string>
+    <string name="addEventLocationHint">Add a Location</string>
+    <string name="addEventPhotoHint">Add a Photo</string>
+
 </resources>

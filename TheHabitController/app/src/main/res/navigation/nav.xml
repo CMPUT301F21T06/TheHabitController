@@ -57,6 +57,12 @@
         android:name="com.example.thehabitcontroller_project.EventsFragmentActivity"
         android:label="fragment_events"
         tools:layout="@layout/fragment_events" />
+        <argument
+        android:name="addEvent"
+        app:argType="com.example.thehabitcontroller_project.Event"/>
+        <action
+            android:id="@+id/action_habits_to_addEventActivity"
+            app:destination="@id/addEventActivity" />
     <fragment
         android:id="@+id/addHabitActivity"
         android:name="com.example.thehabitcontroller_project.AddHabitFragmentActivity"
@@ -65,6 +71,14 @@
         <action
             android:id="@+id/action_addHabitActivity_to_habits"
             app:destination="@id/habits" />
+    <fragment
+        android:id="@+id/addEventActivity"
+        android:name="com.example.thehabitcontroller_project.AddEventFragmentActivity"
+        android:label="fragment_add_event_activity"
+        tools:layout="@layout/fragment_add_event_activity" >
+        <action
+            android:id="@+id/action_addEventActivity_to_events"
+            app:destination="@id/events" />
     </fragment>
     <fragment
         android:id="@+id/editHabitFragmentActivity"
