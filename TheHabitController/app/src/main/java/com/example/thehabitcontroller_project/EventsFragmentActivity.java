@@ -2,11 +2,35 @@ package com.example.thehabitcontroller_project;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+//import com.google.android.gms.tasks.OnCompleteListener;
+//import com.google.android.gms.tasks.OnFailureListener;
+//import com.google.android.gms.tasks.OnSuccessListener;
+//import com.google.android.gms.tasks.Task;
+//import com.google.android.material.floatingactionbutton.FloatingActionButton;
+//import com.google.firebase.firestore.CollectionReference;
+//import com.google.firebase.firestore.DocumentReference;
+//import com.google.firebase.firestore.DocumentSnapshot;
+//import com.google.firebase.firestore.EventListener;
+//import com.google.firebase.firestore.FirebaseFirestore;
+//import com.google.firebase.firestore.FirebaseFirestoreException;
+//import com.google.firebase.firestore.QueryDocumentSnapshot;
+//import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +38,12 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class EventsFragmentActivity extends Fragment {
+    private List<Event> eventList;
+    private ArrayAdapter<Event> eventArrayAdapter;
+    private ListView eventListView;
+//    private FirebaseFirestore db;
+    private String currentUser = "currentUser";
+    final String DBTAG = "FireStore Call";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+    <EditText
+        android:id="@+id/event_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/addHabitTitleHint"
+        android:inputType="textPersonName"
+        />
+
+    <EditText
+        android:id="@+id/event_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/addEventCommentHint"
+        android:inputType="text"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/dateEvent_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/eventStartDateHint"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btPickDateEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/eventStartDateButton"
+            android:layout_weight="2" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/addEventLocationButton"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_weight="2"
+        android:text="@string/addEventLocationHint" />
+
+    <Button
+        android:id="@+id/addEventPhotoButton"
+        android:layout_width="match_parent"
+        android:layout_height="114dp"
+        android:layout_weight="2"
+        android:text="@string/addEventPhotoHint" />
+
+</LinearLayout>
