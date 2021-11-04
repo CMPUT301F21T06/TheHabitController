@@ -16,17 +16,25 @@ public class UserTest {
         User loginUser = new User("test@test.com", "123456", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
+                Log.d("TestLogin","Username: "+u.getUserName());
                 return;
             }
         });
         Thread.sleep(3000);
         loginUser.signOut();
+        Thread.sleep(1000);
     }
 
     @Test
     public void testRegister() throws InterruptedException {
         String username=String.valueOf(Instant.now().getEpochSecond());
         User newUser = User.Register(username+"@test.com",username, "123456");
+        Thread.sleep(4000);
+    }
+
+    public void testRegisterTU() throws InterruptedException {
+        String username=String.valueOf(Instant.now().getEpochSecond());
+        User newUser = User.Register("test@test.com","Test", "123456");
         Thread.sleep(4000);
     }
 
@@ -89,7 +97,7 @@ public class UserTest {
         User tu= new User("test@test.com", "123456", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
-                u.follow("znxqA2XR5JUyozWcsfhfQmCpSLt1");
+                u.follow("DhrqWWLnbxNxGhGc7PTEcthcigw1");
             }
         });
         Thread.sleep(5000);
