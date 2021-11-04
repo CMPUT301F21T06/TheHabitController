@@ -11,10 +11,10 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
-/*
+/**
  * class for initializing the DatePicker fragment to display
  * for users to pick a date from a UI
- * */
+ */
 public class DatePicker extends DialogFragment{
     DatePickerDialog.OnDateSetListener onDateSet;
     private int year, month, day;

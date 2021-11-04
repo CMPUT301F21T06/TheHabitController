@@ -23,8 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
+ * A {@link Fragment} subclass to allow editing of {@link Habit}s of the user
  */
 public class EditHabitFragmentActivity extends Fragment {
 
@@ -42,6 +41,10 @@ public class EditHabitFragmentActivity extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that inflates
+     * the fragment layout
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,15 +52,25 @@ public class EditHabitFragmentActivity extends Fragment {
         return inflater.inflate(R.layout.fragment_edit_habit_activity, container, false);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that just
+     * calls its parent's implementation of onCreate()
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class for handling
+     * building the structures after the view is created and also setting functionality
+     * for editing habits
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // initialize all UI references to be used later
         saveButton = view.findViewById(R.id.saveHabitButton);
         cancelButton = view.findViewById(R.id.cancelEditHabitButton);
         deleteButton = view.findViewById(R.id.deleteHabitButton);
@@ -67,8 +80,10 @@ public class EditHabitFragmentActivity extends Fragment {
         setDateButton = view.findViewById(R.id.btPickDate);
         isPublicCheckBox = view.findViewById(R.id.habitPublicCheckBox);
 
+        // get the bundle from the habit fragment activity that has the selected habit info
         Bundle currHabitBundle = getArguments();
         Habit selectedHabit = currHabitBundle.getParcelable("Habit");
+        // set the current page with that info
         title.setText(selectedHabit.getTitle());
         reason.setText(selectedHabit.getReason());
         date.setText(selectedHabit.getFormattedDate());
@@ -95,6 +110,7 @@ public class EditHabitFragmentActivity extends Fragment {
             }
         });
 
+        // set listener for the cancel button; just go back
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,9 +118,11 @@ public class EditHabitFragmentActivity extends Fragment {
             }
         });
 
+        // set listener for the save button
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // start our edited habit bundle
                 Bundle editHabitBundle = new Bundle();
 
                 // set date to be current date if no input was found
@@ -117,12 +135,16 @@ public class EditHabitFragmentActivity extends Fragment {
                         e.printStackTrace();
                     }
                 }
+                // get the edited habit's info
                 String habitTitle = title.getText().toString();
                 String habitReason = reason.getText().toString();
                 boolean isPublic = isPublicCheckBox.isChecked();
 
+                // put the new habit in the bundle and the index of the habit from the original list
                 editHabitBundle.putParcelable("editedHabit", new Habit(habitTitle, habitReason, inputDate, isPublic));
                 editHabitBundle.putInt("index", currHabitBundle.getInt("index"));
+
+                // navigate to the habit fragment activity
                 Navigation.findNavController(view).navigate(
                     R.id.action_editHabitFragmentActivity_to_habits,
                     editHabitBundle
@@ -130,11 +152,17 @@ public class EditHabitFragmentActivity extends Fragment {
             }
         });
 
+        // set listener for the delete button
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // start new bundle for deleting the habit
                 Bundle deleteHabitBundle = new Bundle();
+
+                // put the index of the habit we want to delete
                 deleteHabitBundle.putInt("deleteIndex", currHabitBundle.getInt("index"));
+
+                // navigate back to habit fragment activity
                 Navigation.findNavController(view).navigate(
                         R.id.action_editHabitFragmentActivity_to_habits,
                         deleteHabitBundle
@@ -143,6 +171,7 @@ public class EditHabitFragmentActivity extends Fragment {
         });
     }
 
+    // attribute for the date listener for setting the date fragment on the page
     DatePickerDialog.OnDateSetListener onDate = new DatePickerDialog.OnDateSetListener() {
         public void onDateSet(android.widget.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             Calendar mCalendar = Calendar.getInstance();

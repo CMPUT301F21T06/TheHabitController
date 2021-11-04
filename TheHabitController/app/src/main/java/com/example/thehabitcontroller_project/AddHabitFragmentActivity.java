@@ -28,7 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A {@link Fragment} subclass.
  * create an instance of this fragment.
  */
 public class AddHabitFragmentActivity extends Fragment{
@@ -45,6 +45,10 @@ public class AddHabitFragmentActivity extends Fragment{
         // Required empty public constructor
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that inflates
+     * the fragment layout
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,13 +56,23 @@ public class AddHabitFragmentActivity extends Fragment{
         return inflater.inflate(R.layout.fragment_add_habit_activity, container, false);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that just
+     * calls its parent's implementation of onCreate()
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
+    /**
+     * Override for extending the {@link Fragment} class for handling
+     * building the structures after the view is created and also setting functionality
+     * for adding habits
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // initialize all UI references to be used later
         addButton = view.findViewById(R.id.addHabitButton);
         cancelButton = view.findViewById(R.id.cancelAddHabitButton);
         title = view.findViewById(R.id.habit_title);
@@ -88,9 +102,11 @@ public class AddHabitFragmentActivity extends Fragment{
             }
         });
 
+        // set the add button listener
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // start a new bundle for transferring the info back to habit list activity
                 Bundle addHabitBundle = new Bundle();
 
                 // set date to be current date if no input was found
@@ -103,11 +119,18 @@ public class AddHabitFragmentActivity extends Fragment{
                         e.printStackTrace();
                     }
                 }
+                // get the other info user put in
                 String habitTitle = title.getText().toString();
                 String habitReason = reason.getText().toString();
                 boolean isPublic = isPublicCheckBox.isChecked();
 
-                addHabitBundle.putParcelable("addHabit", new Habit(habitTitle, habitReason, inputDate, isPublic));
+                // add the new habit to the bundle
+                addHabitBundle.putParcelable(
+                    "addHabit",
+                    new Habit(habitTitle, habitReason, inputDate, isPublic)
+                );
+
+                // navigate to the habit list view
                 Navigation.findNavController(view).navigate(
                     R.id.action_addHabitActivity_to_habits,
                     addHabitBundle
@@ -115,6 +138,7 @@ public class AddHabitFragmentActivity extends Fragment{
             }
         });
 
+        // set listener for canceling, just go back to previous page
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,6 +147,7 @@ public class AddHabitFragmentActivity extends Fragment{
         });
     }
 
+    // attribute for the date listener for setting the date fragment on the page
     DatePickerDialog.OnDateSetListener onDate = new DatePickerDialog.OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             Calendar mCalendar = Calendar.getInstance();
