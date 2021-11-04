@@ -9,4 +9,5 @@
     <string name="habitStartDateButton">Start Date</string>
     <string name="addHabitButtonName">Add</string>
     <string name="cancelAddHabitButtonName">Cancel</string>
+    <string name="habitPublicCheckBox">Is Public</string>
 </resources>

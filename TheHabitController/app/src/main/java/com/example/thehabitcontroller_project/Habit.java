@@ -9,21 +9,24 @@ public class Habit implements Parcelable {
     private String title;
     private String reason;
     private Date dateStart;
+    private boolean isPublic;
 
     public Habit() {
         // empty constructor
     }
 
-    public Habit(String title, String reason, Date dateStart) {
+    public Habit(String title, String reason, Date dateStart, boolean isPublic) {
         this.title = title;
         this.reason = reason;
         this.dateStart = dateStart;
+        this.isPublic = isPublic;
     }
 
     protected Habit(Parcel in) {
         title = in.readString();
         reason = in.readString();
         dateStart = new Date(in.readLong());
+        isPublic = in.readBoolean();
     }
 
     public static final Creator<Habit> CREATOR = new Creator<Habit>() {
@@ -62,6 +65,14 @@ public class Habit implements Parcelable {
         this.dateStart = dateStart;
     }
 
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -72,5 +83,6 @@ public class Habit implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(reason);
         parcel.writeLong(dateStart.getTime());
+        parcel.writeBoolean(isPublic);
     }
 }

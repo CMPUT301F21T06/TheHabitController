@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class AddHabitFragmentActivity extends Fragment{
     private Button setDateButton;
     private Button addButton;
     private Button cancelButton;
+    private CheckBox isPublicCheckBox;
 
     public AddHabitFragmentActivity() {
         // Required empty public constructor
@@ -63,6 +65,7 @@ public class AddHabitFragmentActivity extends Fragment{
         reason = view.findViewById(R.id.habit_reason);
         date = view.findViewById(R.id.date_editText);
         setDateButton = view.findViewById(R.id.btPickDate);
+        isPublicCheckBox = view.findViewById(R.id.habitPublicCheckBox);
 
         // set the onclicklistener for our set date button to pick a date
         setDateButton.setOnClickListener(new View.OnClickListener() {
@@ -102,8 +105,9 @@ public class AddHabitFragmentActivity extends Fragment{
                 }
                 String habitTitle = title.getText().toString();
                 String habitReason = reason.getText().toString();
+                boolean isPublic = isPublicCheckBox.isChecked();
 
-                addHabitBundle.putParcelable("addHabit", new Habit(habitTitle, habitReason, inputDate));
+                addHabitBundle.putParcelable("addHabit", new Habit(habitTitle, habitReason, inputDate, isPublic));
                 Navigation.findNavController(view).navigate(
                     R.id.action_addHabitActivity_to_habits,
                     addHabitBundle
