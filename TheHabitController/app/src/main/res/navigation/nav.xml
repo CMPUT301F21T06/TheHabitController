@@ -29,9 +29,21 @@
         <argument
             android:name="addHabit"
             app:argType="com.example.thehabitcontroller_project.Habit"/>
+        <argument
+            android:name="editedHabit"
+            app:argType="com.example.thehabitcontroller_project.Habit"/>
+        <argument
+            android:name="deleteIndex"
+            android:defaultValue="-1"/>
+        <argument
+            android:name="index"
+            android:defaultValue="-1"/>
         <action
             android:id="@+id/action_habits_to_addHabitActivity"
             app:destination="@id/addHabitActivity" />
+        <action
+            android:id="@+id/action_habits_to_editHabitFragmentActivity"
+            app:destination="@id/editHabitFragmentActivity" />
     </fragment>
 
     <fragment
@@ -52,6 +64,21 @@
         tools:layout="@layout/fragment_add_habit_activity" >
         <action
             android:id="@+id/action_addHabitActivity_to_habits"
+            app:destination="@id/habits" />
+    </fragment>
+    <fragment
+        android:id="@+id/editHabitFragmentActivity"
+        android:name="com.example.thehabitcontroller_project.EditHabitFragmentActivity"
+        android:label="fragment_edit_habit_activity"
+        tools:layout="@layout/fragment_edit_habit_activity" >
+        <argument
+            android:name="Habit"
+            app:argType="com.example.thehabitcontroller_project.Habit"/>
+        <argument
+            android:name="index"
+            android:defaultValue="-1"/>
+        <action
+            android:id="@+id/action_editHabitFragmentActivity_to_habits"
             app:destination="@id/habits" />
     </fragment>
 </navigation>

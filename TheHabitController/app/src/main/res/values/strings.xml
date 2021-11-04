@@ -10,4 +10,6 @@
     <string name="addHabitButtonName">Add</string>
     <string name="cancelAddHabitButtonName">Cancel</string>
     <string name="habitPublicCheckBox">Is Public</string>
+    <string name="saveHabitButtonName">Save</string>
+    <string name="deleteHabitButtonName">Delete</string>
 </resources>

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -73,16 +74,44 @@ public class HabitsFragmentActivity extends Fragment {
 
         initializeHabitList(view);
 
+        habitListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Bundle editHabitBundle = new Bundle();
+                Habit h = habitArrayAdapter.getItem(i);
+                editHabitBundle.putParcelable("Habit", h);
+                editHabitBundle.putInt("index", i);
+                navController.navigate(R.id.action_habits_to_editHabitFragmentActivity, editHabitBundle);
+            }
+        });
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 navController.navigate(R.id.action_habits_to_addHabitActivity);
             }
         });
+    }
 
-        Bundle addHabitBundle = getArguments();
-        if (!addHabitBundle.isEmpty()) {
-            addHabit(addHabitBundle.getParcelable("addHabit"));
+    private void checkHabitListChanges() {
+        Bundle currBundle = getArguments();
+        if (!currBundle.isEmpty()) {
+            Habit addHabit = currBundle.getParcelable("addHabit");
+            if (addHabit != null) {
+                addHabit(addHabit);
+            }
+
+            Habit editedHabit = currBundle.getParcelable("editedHabit");
+            if (editedHabit != null) {
+                int index = currBundle.getInt("index");
+                deleteHabit(index);
+                addHabit(editedHabit);
+            }
+
+            int deleteIndex = currBundle.getInt("deleteIndex", -1);
+            if (deleteIndex != -1) {
+                deleteHabit(deleteIndex);
+            }
         }
     }
 
@@ -98,6 +127,8 @@ public class HabitsFragmentActivity extends Fragment {
                     habitList.add(doc.toObject(Habit.class));
                 }
                 habitArrayAdapter.notifyDataSetChanged();
+
+                checkHabitListChanges();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -121,8 +152,17 @@ public class HabitsFragmentActivity extends Fragment {
     public void addHabit(Habit habit) {
         final DocumentReference userDr = db.collection("users").document(currentUser);
         final CollectionReference usersCr = userDr.collection("Habits");
+        habitList.add(habit);
+        habitArrayAdapter.notifyDataSetChanged();
+        usersCr.document(habit.getTitle()).set(habit);
+    }
 
-        habitArrayAdapter.add(habit);
-        usersCr.add(habit);
+    public void deleteHabit(int index) {
+        final DocumentReference userDr = db.collection("users").document(currentUser);
+        final CollectionReference usersCr = userDr.collection("Habits");
+        Habit h = habitArrayAdapter.getItem(index);
+        habitList.remove(h);
+        habitArrayAdapter.notifyDataSetChanged();
+        usersCr.document(h.getTitle()).delete();
     }
 }
