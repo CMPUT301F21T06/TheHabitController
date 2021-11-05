@@ -9,17 +9,20 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,6 +52,14 @@ public class User {
         public void onSearchComplete(ArrayList<User> result);
     }
 
+    public interface UserDataListener {
+        public void onDataChange(User result);
+    }
+
+    public interface UserListDataListener {
+        public void onDataChange(ArrayList<User> result);
+    }
+
     /**
      * Check if current user has logged in.
      */
@@ -65,6 +76,22 @@ public class User {
     private static void assertAuth() {
         if (!isAuth()) {
             throw new SecurityException("User not logged in");
+        }
+    }
+
+    /**
+     * Update user object variables with the Map
+     * @param map the Map object to apply update with
+     */
+    private void updateWithMap(Map<String,Object> map) {
+        if (map.containsKey("id")) {
+            userId=(String) map.get("id");
+        }
+        if (map.containsKey("name")) {
+            name=(String) map.get("name");
+        }
+        if (map.containsKey("email")) {
+            email=(String) map.get("email");
         }
     }
 
@@ -170,6 +197,30 @@ public class User {
         return newUser;
     };
 
+    /**
+     * Get a user object given user id
+     * @param userId the user id
+     * @param listener the listener for OnDataChange event
+     */
+    public static void getUserFromId(String userId, UserDataListener listener){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        User returnUser = new User("","","");
+
+        Task task = db.collection("users").whereEqualTo("id",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    Map<String,Object> data=task.getResult().getDocuments().get(0).getData();
+                    returnUser.updateWithMap(data);
+                    listener.onDataChange(returnUser);
+                }
+            }
+        });
+    }
+
+    /**
+     * Process first login (new user) routines (create a new document in database to store extra user info)
+     */
     public static void firstLogin(){
         Log.d("UserFirstLogin","First Login Event");
         // new user
@@ -178,6 +229,7 @@ public class User {
         user.put("name", currentUser.getUserName());
         user.put("id", currentUser.getUserId());
         user.put("follower", Arrays.asList());
+        user.put("followReq", Arrays.asList());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users")
                 .add(user)
@@ -243,22 +295,6 @@ public class User {
     }
 
     /**
-     * Get the (display) name of a user
-     * @return the display name of a user
-     */
-    public String getUserName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    /**
      * Updates the (display) name of current user
      * @param newName the new (display) name of current user
      */
@@ -276,51 +312,152 @@ public class User {
         });
     }
 
-    /** follow a specific user by uid
-     * @param userId uid of the user to follow
+    /**
+     * Send a follow request to target user
+     * @param target the target user
      */
-    public void follow(String userId){
+    public static void requestFollow(User target) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Log.d("UserFollow","Start "+getUserName());
-        db.collection("users").whereEqualTo("name", name)
+        Log.d("RequestFollow",target.getUserId());
+        db.collection("users").whereEqualTo("id",target.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    Log.d("UserAcceptFollow","Complete fetching target user data");
+                    DocumentReference d = task.getResult().getDocuments().get(0).getReference();
+                    Map<String,Object> upd= new HashMap<>();
+                    upd.put("followReq",FieldValue.arrayUnion(currentUser.userId));
+                    d.update(upd);
+                } else {
+                    throw new RuntimeException("Failed to send follow request to user "+target.userId);
+                }
+            }
+        });
+    }
+
+    /** Accept a follow request from user
+     * @param user user to add into follower list
+     */
+    public static void acceptFollow(User user){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").whereEqualTo("id", currentUser.userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    Log.d("UserFollow","Complete fetching user data");
+                    Log.d("UserAcceptFollow","Complete fetching current user data");
                     DocumentReference d = task.getResult().getDocuments().get(0).getReference();
                     Map<String,Object> upd= new HashMap<>();
-                    upd.put("follow",FieldValue.arrayUnion(userId));
+                    upd.put("follower",FieldValue.arrayUnion(user.userId));
+                    upd.put("followReq",FieldValue.arrayRemove(user.userId));
                     d.update(upd);
                 }else{
-                    throw new RuntimeException("Failed to follow user "+userId);
+                    throw new RuntimeException("Failed to accpet user "+user.userId);
                 }
             }
         });
-        ArrayList<String> fList= new ArrayList<>();
     }
 
     /**
-     * Get the list of currently followed uesrs
-     * @return an ArrayList of userIds
+     * Get the list of users requesting to follow current user
+     * @param dataListener the listener for onDataChange event
      */
-    public ArrayList<String> followedUsers(){
-        ArrayList<String> fList = new ArrayList<>();
+    public void getFollowRequests(UserListDataListener dataListener){
+        ArrayList<User> fList = new ArrayList<>();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users").whereEqualTo("name",name).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Task t = db.collection("users").whereEqualTo("id",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    ArrayList<String> rs = (ArrayList<String>) task.getResult().getDocuments().get(0).get("followReq");
+                    if (rs.size()>0){
+                        for (String item:rs){
+                            User.getUserFromId(item, new UserDataListener() {
+                                @Override
+                                public void onDataChange(User result) {
+                                    fList.add(result);
+                                    dataListener.onDataChange(fList);
+                                }
+                            });
+                        }
+                    }
+                }else{
+                    Log.d("UserGetFollowReq","Fail getting the follow request list");
+                }
+            }
+        });
+    }
+
+    /**
+     * Get the list of users following current user
+     * @param dataListener the listener for onDataChange event
+     */
+    public void getFollowers(UserListDataListener dataListener){
+        ArrayList<User> fList = new ArrayList<>();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Task t = db.collection("users").whereEqualTo("id",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
                     ArrayList<String> rs = (ArrayList<String>) task.getResult().getDocuments().get(0).get("follow");
                     if (rs.size()>0){
-                        fList.addAll(rs);
+                        for (String item:rs){
+                            User.getUserFromId(item, new UserDataListener() {
+                                @Override
+                                public void onDataChange(User result) {
+                                    fList.add(result);
+                                    dataListener.onDataChange(fList);
+                                }
+                            });
+                        }
                     }
                 }else{
-                    Log.d("UserFollowList","Failed getting the followed users list");
+                    Log.d("UserGetFollowers","Fail getting the followers list");
                 }
             }
         });
-        return fList;
+    }
+
+    /**
+     * Get the list of users the current user is following
+     * @param dataListener the listener for onDataChange event
+     */
+    public void getFollowing(UserListDataListener dataListener){
+        ArrayList<User> fList = new ArrayList<>();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Task t = db.collection("users").whereArrayContains("follower",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    if (!task.getResult().isEmpty()){
+                        for (QueryDocumentSnapshot doc:task.getResult()){
+                            User au =new User();
+                            au.updateWithMap(doc.getData());
+                            fList.add(au);
+                        }
+                    }
+                    dataListener.onDataChange(fList);
+                }else{
+                    Log.d("UserGetFollowing","Fail getting the follow list");
+                }
+            }
+        });
+    }
+
+    /**
+     * Get the (display) name of a user
+     * @return the display name of a user
+     */
+    public String getUserName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     /**
