@@ -34,9 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link EventsFragmentActivity   //#newInstance} factory method to //commented out to fix error for now
- * create an instance of this fragment.
+ * A {@link Fragment} subclass to show the current {@link Event}s of the user
+ * This class links with {@link FirebaseFirestore} in order to store, pull and update its data
+ *
+ * @author Tyler
+ * @version 1.0.0
  */
 public class EventsFragmentActivity extends Fragment {
     private List<Event> eventList;
@@ -50,11 +52,19 @@ public class EventsFragmentActivity extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that just
+     * calls its parent's implementation of onCreate()
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that inflates
+     * the fragment layout
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,6 +72,10 @@ public class EventsFragmentActivity extends Fragment {
         return inflater.inflate(R.layout.fragment_events, container, false);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class for handling
+     * building the structures after the view is created
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -72,8 +86,10 @@ public class EventsFragmentActivity extends Fragment {
         eventListView = view.findViewById(R.id.event_list);
         eventListView.setAdapter(eventArrayAdapter);
 
+        // initialize the event list from the FireStore database
         initializeEventList(view);
 
+        // sets the listener for the button to add Events to the list
         final FloatingActionButton fab = view.findViewById(R.id.eventFloatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,13 +99,21 @@ public class EventsFragmentActivity extends Fragment {
         });
     }
 
+    /**
+     * A helper method for setting up initializing our list of {@link Event} objects
+     * This method will look at our {@link FirebaseFirestore} database and build our
+     * list from the entries that exist in that collection.
+     * @param view the current {@link View} we are in
+     */
     private void initializeEventList(View view) {
+        // initializes the Collection reference to the user's collection
         final DocumentReference userDr = db.collection("users").document(currentUser);
         final CollectionReference usersCr = userDr.collection("Events");
 
         usersCr.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                // start with an empty list then add all events to the list
                 eventList.clear();
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                     eventList.add(doc.toObject(Event.class));
@@ -99,10 +123,12 @@ public class EventsFragmentActivity extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                // if Firestore call fails it stores a log in DBTAG
                 Log.d(DBTAG, "Was not able to get the data from Firestore to populate initial Event list");
             }
         });
 
+        // if changes occur in the FIreStore db it will clear the list and re-add the events
         usersCr.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -116,10 +142,14 @@ public class EventsFragmentActivity extends Fragment {
     }
 
     public void addEvent(Event event) {
+        // initializes the Collection reference to the user's collection
         final DocumentReference userDr = db.collection("users").document(currentUser);
         final CollectionReference usersCr = userDr.collection("Events");
 
+        // adds the event to the list then renders changes
         eventArrayAdapter.add(event);
+        eventArrayAdapter.notifyDataSetChanged();
+        // adds event to the database
         usersCr.add(event);
     }
 }

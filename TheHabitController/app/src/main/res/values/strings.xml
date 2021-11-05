@@ -14,7 +14,7 @@
     <string name="deleteHabitButtonName">Delete</string>
 
     <string name="addEventTitleHint">Add an Event Title</string>
-    <string name="addEventCommentHint">Add a Comment</string>
+    <string name="addEventCommentHint">Add a Comment (Max 20 characters)</string>
     <string name="eventStartDateHint">Event Date</string>
     <string name="eventStartDateButton">Event Date</string>
     <string name="addEventButtonName">Add</string>
