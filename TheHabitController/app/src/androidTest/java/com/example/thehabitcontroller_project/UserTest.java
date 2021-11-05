@@ -61,19 +61,19 @@ public class UserTest {
 
     @Test
     public void testUserSearch() throws InterruptedException{
-        ArrayList<Map<String, Object>> gres=new ArrayList<>();
+        ArrayList<User> gres=new ArrayList<>();
         User.searchUser("Te", new User.UserSearchListener() {
             @Override
-            public void onSearchComplete(ArrayList<Map<String, Object>> result) {
+            public void onSearchComplete(ArrayList<User> result) {
                 gres.addAll(result);
             }
         });
 
         Thread.sleep(3000);
         boolean flag=false;
-        for (Map<String, Object> u:gres){
+        for (User u:gres){
             Log.d("UserSearchTest",u.toString());
-            if (((String) u.get("name")).compareTo("Test")==0) {
+            if (u.getUserName().compareTo("Test")==0) {
                 return;
             }
         }

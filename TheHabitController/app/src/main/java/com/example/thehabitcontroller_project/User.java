@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +46,7 @@ public class User {
          * Triggered when the userSearch() operation completes
          * @param result a list of matching users
          */
-        public void onSearchComplete(ArrayList<Map<String,Object>> result);
+        public void onSearchComplete(ArrayList<User> result);
     }
 
     /**
@@ -168,6 +170,32 @@ public class User {
         return newUser;
     };
 
+    public static void firstLogin(){
+        Log.d("UserFirstLogin","First Login Event");
+        // new user
+        Map<String, Object> user = new HashMap<>();
+        user.put("email",currentUser.getEmail());
+        user.put("name", currentUser.getUserName());
+        user.put("id", currentUser.getUserId());
+        user.put("follower", Arrays.asList());
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("UserFisrtLogin", "User: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("UserFisrtLogin", "Error adding document", e);
+                        throw new SecurityException("User failed first login process");
+                    }
+                });
+    }
+
     /**
      * Set the current user
      * @param u User to be set as current user
@@ -191,7 +219,7 @@ public class User {
      */
     public static void searchUser(String keyword, UserSearchListener listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        ArrayList<Map<String,Object>> result= new ArrayList<>();
+        ArrayList<User> result= new ArrayList<>();
         db.collection("users")
                 .whereGreaterThanOrEqualTo("name", keyword)
                 .whereLessThanOrEqualTo("name", keyword+ '\uf8ff')
@@ -201,7 +229,10 @@ public class User {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()){
                             for (QueryDocumentSnapshot doc:task.getResult()){
-                                result.add(doc.getData());
+                                Map<String,Object> dat=doc.getData();
+                                result.add(new User((String) dat.get("email"),
+                                        (String) dat.get("name"),
+                                        (String) dat.get("id")));
                             }
                             listener.onSearchComplete(result);
                         }else{
@@ -217,6 +248,14 @@ public class User {
      */
     public String getUserName() {
         return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     /**
