@@ -13,16 +13,26 @@ import java.util.Locale;
  * Unit test file for testing the {@link Habit} class
  */
 public class HabitClassUnitTest {
+
+    /**
+     * This tests the constructor of the {@link Habit} class and makes sure that
+     * its setters are working and returning the correct values we initialized it with
+     */
     @Test
     public void TestHabitConstructor() {
-        Habit h = new Habit("Running", "Want to get better", new Date(), true);
+        Date d = new Date();
+        Habit h = new Habit("Running", "Want to get better", d, true);
 
         assertEquals(h.getTitle(),"Running");
         assertEquals(h.getReason(),"Want to get better");
-        assertEquals(h.getDateStart(), new Date());
+        assertEquals(h.getDateStart(), d);
         assertEquals(h.isPublic(), true);
     }
 
+    /**
+     *
+     */
+    @Test
     public void TestChangingHabit() {
         Habit h = new Habit("Running", "Want to get better", new Date(), true);
 
@@ -38,6 +48,7 @@ public class HabitClassUnitTest {
         assertEquals(h.isPublic(), false);
     }
 
+    @Test
     public void TestFormattedDate() {
         Habit h = new Habit("Running", "Want to get better", new Date(), true);
 
