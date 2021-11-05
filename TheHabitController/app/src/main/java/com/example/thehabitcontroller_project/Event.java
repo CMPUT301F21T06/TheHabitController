@@ -2,7 +2,11 @@ package com.example.thehabitcontroller_project;
 
 import android.location.Location;
 import android.graphics.Bitmap;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,7 +21,8 @@ public class Event implements Parcelable {
     private String title;
     private String comment; // optional comment up to 20 characters
     private Date dateEvent;
-    private Location location;
+    private String location; // temporary until implemented
+//    private Location location;
     private String bitmapString;
 
     public Event() {
@@ -32,11 +37,11 @@ public class Event implements Parcelable {
      * @param location     Location the event occurred
      * @param bitmapString Photo of the event
      */
-    public Event(String title, String comment, Location location, String bitmapString, Date dateEvent) {
+    public Event(String title, String comment, String location, String bitmapString, Date dateEvent) {
         this.title = title;
         this.comment = comment;
         this.dateEvent = dateEvent;
-        this.location = location;
+        this.location = location; // will change back to type Location
         this.bitmapString = bitmapString;
     }
 
@@ -48,9 +53,16 @@ public class Event implements Parcelable {
     protected Event(Parcel in) {
         title = in.readString();
         comment = in.readString();
+        // limit comment length to 20
+        int maxLength = 20;
+        comment = comment.substring(0, maxLength);
+
         dateEvent = new Date(in.readLong());
-        // location =
-        // bitmapString =
+        location = "location"; // temporary until implemented
+//        location = new Location("Home");
+//        location.setLongitude(0);
+//        location.setLatitude(0);
+        bitmapString = "bitmapString"; // temporary until implemented
     }
 
     /**
@@ -121,15 +133,15 @@ public class Event implements Parcelable {
      * The getter for the Event's location
      * @return The Event's location as a {@link Location} object
      */
-    public Location getLocation() {
+    public String getLocation() {
         return location;
-    }
+    } // temporary until implemented - change back type to Location
 
     /**
      * The setter for the Event's location
      * @param location The Event's location {@link Location} object
      */
-    public void setLocation(Location location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 
@@ -170,7 +182,21 @@ public class Event implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(comment);
         parcel.writeLong(dateEvent.getTime());
-        location.writeToParcel(parcel, i);
+        parcel.writeString(location); // temporary until implemented
+//        location.writeToParcel(parcel, i);
         parcel.writeString(bitmapString);
+    }
+
+    /**
+     * Gets the Event's formatted date from the event date that is used
+     * when the Event is viewed/edited or created on the creation fragment
+     * Uses the formatting pattern 'EEEE, MMMM dd, yyyy' which shows the
+     * Name of the day in the week, followed by the shortened Month, and then
+     * the day of the month as a 2 digit number, and the year.
+     * @return {@link String} of the formatted date using the {@link SimpleDateFormat} pattern of 'EEEE, MMMM dd, yyyy'
+     */
+    public String getFormattedDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.US);
+        return formatter.format(dateEvent);
     }
 }

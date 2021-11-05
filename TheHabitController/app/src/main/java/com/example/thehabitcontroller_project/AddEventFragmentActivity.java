@@ -128,8 +128,9 @@ public class AddEventFragmentActivity extends Fragment{
                 // collects info entered by user
                 String event = title.getText().toString();
                 String eventComment = comment.getText().toString();
-                Location eventLocation = location; // need to implement
-                String bitmap = bitmapString; // need to implement
+                String eventLocation = "location";
+//                Location eventLocation = new Location("Home"); // need to implement
+                String bitmap = "bitmapString"; // need to implement
 
                 // add the new event to the bundle
                 addEventBundle.putParcelable("addEvent", new Event(event, eventComment, eventLocation, bitmap, inputDate));
