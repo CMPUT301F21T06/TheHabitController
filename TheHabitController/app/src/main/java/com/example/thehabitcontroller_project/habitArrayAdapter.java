@@ -16,6 +16,9 @@ import java.util.List;
 /**
  * A custom adapter for {@link Habit} objects that is a subclass of
  * {@link ArrayAdapter} for showing the Habit's title in the habit listview
+ *
+ * @author Steven
+ * @version 1.0.0
  */
 public class habitArrayAdapter extends ArrayAdapter<Habit> {
 

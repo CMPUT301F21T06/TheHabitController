@@ -28,8 +28,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * A {@link Fragment} subclass.
- * create an instance of this fragment.
+ * A {@link Fragment} subclass to allow adding of {@link Habit} objects
+ * to the list
+ *
+ * @author Steven
+ * @version 1.0.0
  */
 public class AddHabitFragmentActivity extends Fragment{
 

@@ -24,6 +24,9 @@ import java.util.Date;
 
 /**
  * A {@link Fragment} subclass to allow editing of {@link Habit}s of the user
+ *
+ * @author Steven
+ * @version 1.0.0
  */
 public class EditHabitFragmentActivity extends Fragment {
 

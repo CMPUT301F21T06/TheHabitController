@@ -8,11 +8,11 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * @author Steven
- * @version 1.0.0
- *
  * The Habit class for storing all information that pertains to a Habit.
  * This will store the title, reason, date start, and public status of a Habit
+ *
+ * @author Steven
+ * @version 1.0.0
  */
 public class Habit implements Parcelable, Comparable<Habit>{
     private String title;
