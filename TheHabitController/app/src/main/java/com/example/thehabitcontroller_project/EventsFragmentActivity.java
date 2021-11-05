@@ -1,5 +1,6 @@
 package com.example.thehabitcontroller_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -49,24 +50,6 @@ public class EventsFragmentActivity extends Fragment {
         // Required empty public constructor
     }
 
-//    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-//     * @return A new instance of fragment Events.
-//     */
-//    // TODO: Rename and change types and number of parameters
-//    public static EventsFragmentActivity newInstance(String param1, String param2) {
-//        EventsFragmentActivity fragment = new EventsFragmentActivity();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +65,6 @@ public class EventsFragmentActivity extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        FloatingActionButton fab = view.findViewById(R.id.eventFloatingActionButton);
         NavController navController = Navigation.findNavController(view);
         db = FirebaseFirestore.getInstance();
         eventList = new ArrayList<>();
@@ -92,17 +74,13 @@ public class EventsFragmentActivity extends Fragment {
 
         initializeEventList(view);
 
+        final FloatingActionButton fab = view.findViewById(R.id.eventFloatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 navController.navigate(R.id.action_events_to_addEventActivity);
             }
         });
-
-        Bundle addEventBundle = getArguments();
-        if (!addEventBundle.isEmpty()) {
-            addEvent(addEventBundle.getParcelable("addEvent"));
-        }
     }
 
     private void initializeEventList(View view) {
