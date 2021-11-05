@@ -2,6 +2,7 @@ package com.example.thehabitcontroller_project;
 
 import static androidx.navigation.Navigation.findNavController;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -9,9 +10,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Arrays;
 
 /**
  * @author mainul1
@@ -36,6 +42,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpNavigation();
+        // register firebase authentication listener for login/logout operations
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser()!=null){
+                    User.setCurrentUser(new User(firebaseAuth.getCurrentUser()));
+                } else {
+                    signIn();
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (User.getCurrentUser()==null) {
+            signIn();
+        }
+    }
+
+    /**
+     * Build and launch login intent
+     */
+    public void signIn() {
+        Intent loginIntent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build()))
+                .setIsSmartLockEnabled(false)
+                .build();
+        startActivity(loginIntent);
     }
 
     /**
