@@ -13,6 +13,7 @@
     <string name="saveHabitButtonName">Save</string>
     <string name="deleteHabitButtonName">Delete</string>
 
+    <string name="addEventTitleHint">Add an Event Title</string>
     <string name="addEventCommentHint">Add a Comment</string>
     <string name="eventStartDateHint">Event Date</string>
     <string name="eventStartDateButton">Event Date</string>
