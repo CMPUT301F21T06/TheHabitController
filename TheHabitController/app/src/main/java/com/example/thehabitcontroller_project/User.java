@@ -29,6 +29,7 @@ public class User {
     private FirebaseAuth mAuth;
     private FirebaseUser fbUser;
     private String email, name, userId;
+    private static User currentUser=null;
 
     public interface UserAuthListener {
         /**
@@ -49,8 +50,8 @@ public class User {
     /**
      * Check if current user has logged in.
      */
-    private boolean isAuth() {
-        if (mAuth.getCurrentUser()==null) {
+    private static boolean isAuth() {
+        if (currentUser==null) {
             return false;
         }
         return true;
@@ -59,7 +60,7 @@ public class User {
     /**
      * Check if current user has logged in. If not, throw SecurityException.
      */
-    private void assertAuth() {
+    private static void assertAuth() {
         if (!isAuth()) {
             throw new SecurityException("User not logged in");
         }
@@ -106,6 +107,18 @@ public class User {
         this.email=email;
         this.name=name;
         this.userId=userId;
+    }
+
+    /**
+     * Create a User object with FirebaseUser
+     * @param fUser the FirebaseUser to create User object with
+     */
+    public User(FirebaseUser fUser) {
+        this.mAuth=FirebaseAuth.getInstance();
+        this.fbUser=fUser;
+        this.email=fUser.getEmail();
+        this.name=fUser.getDisplayName();
+        this.userId=fUser.getUid();
     }
 
     /**
@@ -156,6 +169,22 @@ public class User {
     };
 
     /**
+     * Set the current user
+     * @param u User to be set as current user
+     */
+    public static void setCurrentUser(User u){
+        currentUser = u;
+    }
+
+    /**
+     * Get the User object of current user
+     * @return the User object
+     */
+    public static User getCurrentUser(){
+        return currentUser;
+    }
+
+    /**
      * Search users using a keyword
      * @param keyword the keyword used to search for users
      * @param listener a UserSearchListener to be triggered when search operation completes
@@ -183,8 +212,8 @@ public class User {
     }
 
     /**
-     * Get the (display) name of current user
-     * @return the display name of current user
+     * Get the (display) name of a user
+     * @return the display name of a user
      */
     public String getUserName() {
         return name;
@@ -194,16 +223,16 @@ public class User {
      * Updates the (display) name of current user
      * @param newName the new (display) name of current user
      */
-    public void setUserName(String newName) {
+    public static void setUserName(String newName) {
         assertAuth();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(newName)
                 .build();
-        fbUser.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+        currentUser.fbUser.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Log.d("User-Profile","Profile updated.");
-                name=newName;
+                currentUser.name = newName;
             }
         });
     }
@@ -256,7 +285,7 @@ public class User {
     }
 
     /**
-     * Sign out the current user
+     * Sign out the user
      */
     public void signOut(){
         mAuth.signOut();
