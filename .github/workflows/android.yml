@@ -21,6 +21,6 @@ jobs:
         cache: gradle
 
     - name: Grant execute permission for gradlew
-      run: chmod +x ./TheHabitController/gradlew
+      run: cd ./TheHabitController && chmod +x gradlew
     - name: Build with Gradle
-      run: ./TheHabitController/gradlew build
+      run: cd ./TheHabitController && ./gradlew build
