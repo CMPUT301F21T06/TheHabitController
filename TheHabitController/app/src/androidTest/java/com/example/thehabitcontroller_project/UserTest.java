@@ -46,7 +46,16 @@ public class UserTest {
         User loginUser = new User("test@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User loginUser) {
+                User.setCurrentUser(loginUser);
                 loginUser.setUserName("Test");
+
+                try{
+                    Thread.sleep(2000);
+                } catch (Exception e){
+
+                }
+
+                loginUser.setUserName("FTest LTest");
 
                 try{
                     Thread.sleep(2000);
@@ -108,6 +117,7 @@ public class UserTest {
         User tu= new User("test2@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
+                User.setCurrentUser(u);
                 User.getUserFromId("Zq9OMCHJbNbwb4T1wXhuESb9UyE2", new User.UserDataListener() {
                     @Override
                     public void onDataChange(User result) {
@@ -131,6 +141,7 @@ public class UserTest {
         User tu= new User("test@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
+                User.setCurrentUser(u);
                 User.getUserFromId("Zq9OMCHJbNbwb4T1wXhuESb9UyE2", new User.UserDataListener() {
                     @Override
                     public void onDataChange(User result) {

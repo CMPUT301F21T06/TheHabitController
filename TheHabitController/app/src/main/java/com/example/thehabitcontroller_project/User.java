@@ -30,6 +30,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The User class stores local user information and handles user operations.
+ *
+ * @author Marcus
+ * @version 1.0.0
+ */
+
 public class User {
     private FirebaseAuth mAuth;
     private FirebaseUser fbUser;
