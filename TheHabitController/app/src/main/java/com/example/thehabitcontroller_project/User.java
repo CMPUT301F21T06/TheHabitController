@@ -320,8 +320,24 @@ public class User {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 db.collection("users")
                         .whereEqualTo("id",currentUser.getUserId())
-                        .get().getResult().getDocuments().get(0).getReference()
-                        .update(upd);
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            Log.d("User-Profile","User profile fetched.");
+                            task.getResult().getDocuments().get(0).getReference()
+                                    .update(upd).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Log.d("User-Profile","Username updated in database.");
+                                }
+                            });
+                        } else
+                        {
+                            Log.d("User-Profile","Fail updating the database.");
+                        }
+                    }
+                });
             }
         });
     }

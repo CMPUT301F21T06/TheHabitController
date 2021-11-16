@@ -47,26 +47,18 @@ public class UserTest {
             @Override
             public void onAuthComplete(User loginUser) {
                 User.setCurrentUser(loginUser);
-                loginUser.setUserName("Test");
+                User.setUserName("FTest LTest");
 
                 try{
-                    Thread.sleep(2000);
+                    Thread.sleep(8000);
                 } catch (Exception e){
 
                 }
 
-                loginUser.setUserName("FTest LTest");
-
-                try{
-                    Thread.sleep(2000);
-                } catch (Exception e){
-
-                }
-
-                loginUser.signOut();
+                User.getCurrentUser().signOut();
             }
         });
-        Thread.sleep(3000);
+        Thread.sleep(10000);
     }
 
     @Test
