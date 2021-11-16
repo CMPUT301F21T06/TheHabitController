@@ -315,6 +315,13 @@ public class User {
             public void onComplete(@NonNull Task<Void> task) {
                 Log.d("User-Profile","Profile updated.");
                 currentUser.name = newName;
+                Map<String, Object> upd=new HashMap<>();
+                upd.put("name", newName);
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("users")
+                        .whereEqualTo("id",currentUser.getUserId())
+                        .get().getResult().getDocuments().get(0).getReference()
+                        .update(upd);
             }
         });
     }
