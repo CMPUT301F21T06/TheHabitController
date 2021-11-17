@@ -239,11 +239,12 @@ public class User {
         user.put("followReq", Arrays.asList());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                .document(currentUser.getUserId())
+                .set(user)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("UserFisrtLogin", "User: " + documentReference.getId());
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("UserFisrtLogin", "User: " + currentUser.getUserId());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
