@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import android.util.Log;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -28,7 +29,7 @@ public class UserTest {
         Thread.sleep(1000);
     }
 
-    //@Test
+    @Ignore
     public void testRegister() throws InterruptedException {
         String username=String.valueOf(Instant.now().getEpochSecond());
         User newUser = User.Register(username+"@test.com",username, "123456");
@@ -82,7 +83,7 @@ public class UserTest {
         fail("User with 'FTe' in display name is not found");
     }
 
-    @Test
+    @Ignore
     public void testUserFollow() throws InterruptedException{
         User tu= new User("test@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
@@ -104,7 +105,7 @@ public class UserTest {
         Thread.sleep(4000);
     }
 
-    @Test
+    @Ignore
     public void testUserAcceptFollow() throws InterruptedException{
         User tu= new User("test2@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
@@ -127,7 +128,7 @@ public class UserTest {
         Thread.sleep(4000);
     }
 
-    @Test
+    @Ignore
     public void testUserFollowing() throws InterruptedException{
         ArrayList<User> a = new ArrayList<>();
         User tu= new User("test@test.com", "asdf1234", new User.UserAuthListener() {
@@ -165,7 +166,7 @@ public class UserTest {
         fail("User not found in the following list.");
     }
 
-    @Test
+    @Ignore
     public void testUserFollowReq() throws InterruptedException{
         ArrayList<User> a = new ArrayList<>();
         User tu= new User("test2@test.com", "asdf1234", new User.UserAuthListener() {
