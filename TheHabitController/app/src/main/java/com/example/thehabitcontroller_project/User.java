@@ -30,6 +30,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The User class stores local user information and handles user operations.
+ *
+ * @author Marcus
+ * @version 1.0.0
+ */
+
 public class User {
     private FirebaseAuth mAuth;
     private FirebaseUser fbUser;
@@ -222,7 +229,7 @@ public class User {
      * Process first login (new user) routines (create a new document in database to store extra user info)
      */
     public static void firstLogin(){
-        Log.d("UserFirstLogin","First Login Event");
+        Log.d("UserFirstLogin","First Login Event "+currentUser.getUserId());
         // new user
         Map<String, Object> user = new HashMap<>();
         user.put("email",currentUser.getEmail());
@@ -232,11 +239,12 @@ public class User {
         user.put("followReq", Arrays.asList());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                .document(currentUser.getUserId())
+                .set(user)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("UserFisrtLogin", "User: " + documentReference.getId());
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("UserFisrtLogin", "User: " + currentUser.getUserId());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -308,6 +316,29 @@ public class User {
             public void onComplete(@NonNull Task<Void> task) {
                 Log.d("User-Profile","Profile updated.");
                 currentUser.name = newName;
+                Map<String, Object> upd=new HashMap<>();
+                upd.put("name", newName);
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("users")
+                        .whereEqualTo("id",currentUser.getUserId())
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            Log.d("User-Profile","User profile fetched.");
+                            task.getResult().getDocuments().get(0).getReference()
+                                    .update(upd).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Log.d("User-Profile","Username updated in database.");
+                                }
+                            });
+                        } else
+                        {
+                            Log.d("User-Profile","Fail updating the database.");
+                        }
+                    }
+                });
             }
         });
     }
