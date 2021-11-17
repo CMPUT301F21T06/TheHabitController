@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -46,7 +48,7 @@ public class HabitsFragmentActivity extends Fragment {
     private ArrayAdapter<Habit> habitArrayAdapter;
     private ListView habitListView;
     private FirebaseFirestore db;
-    private String currentUser = "currentUser";
+    private String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
     final String DBTAG = "FireStore Call";
 
     public HabitsFragmentActivity() {
