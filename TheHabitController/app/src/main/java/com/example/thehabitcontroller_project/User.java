@@ -229,7 +229,7 @@ public class User {
      * Process first login (new user) routines (create a new document in database to store extra user info)
      */
     public static void firstLogin(){
-        Log.d("UserFirstLogin","First Login Event");
+        Log.d("UserFirstLogin","First Login Event "+currentUser.getUserId());
         // new user
         Map<String, Object> user = new HashMap<>();
         user.put("email",currentUser.getEmail());
