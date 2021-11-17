@@ -21,5 +21,6 @@
     <string name="cancelAddEventButtonName">Cancel</string>
     <string name="addEventLocationHint">Add a Location</string>
     <string name="addEventPhotoHint">Add a Photo</string>
+    <string name="HabitContentNameExample">Habit Name</string>
 
 </resources>
