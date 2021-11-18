@@ -29,11 +29,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link Fragment} subclass to show the current {@link Habit}s of the user
@@ -135,7 +139,7 @@ public class HabitsFragmentActivity extends Fragment {
             if (editedHabit != null) {
                 int index = currBundle.getInt("index");
                 deleteHabit(index);
-                addHabit(editedHabit);
+                insertHabit(editedHabit, index);
             }
 
             // see if we've deleted a habit
@@ -161,7 +165,7 @@ public class HabitsFragmentActivity extends Fragment {
         final CollectionReference usersCr = userDr.collection("Habits");
 
         // set the listener for when the async call finishes
-        usersCr.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        usersCr.orderBy("order").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 // clear our habit list if there is anything in it
@@ -185,7 +189,7 @@ public class HabitsFragmentActivity extends Fragment {
         });
 
         // listener for if changes occur in our FireStore db, then we change it accordingly here
-        usersCr.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        usersCr.orderBy("order").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 habitList.clear();
@@ -212,6 +216,11 @@ public class HabitsFragmentActivity extends Fragment {
         habitArrayAdapter.notifyDataSetChanged();
         // add habit to our database
         usersCr.document(habit.getTitle()).set(habit);
+
+        // add the ordering for the habit
+        Map<String, Object> docData = new HashMap<>();
+        docData.put("order", habitList.size() - 1);
+        usersCr.document(habit.getTitle()).set(docData, SetOptions.merge());
     }
 
     /**
@@ -234,5 +243,42 @@ public class HabitsFragmentActivity extends Fragment {
         habitArrayAdapter.notifyDataSetChanged();
         // also delete from database
         usersCr.document(h.getTitle()).delete();
+
+        Map<String, Object> docData = new HashMap<>();
+        // update all further ordering for deletion
+        for (int i = index; i < habitList.size(); i++) {
+            // add the ordering for the habit
+            docData.put("order", i);
+            usersCr.document(habitList.get(i).getTitle()).set(docData, SetOptions.merge());
+        }
+    }
+
+    /**
+     * Method for inserting a habit to our {@link FirebaseFirestore} database as well as our {@link Habit}
+     * object list that's shown on the current fragment at a certain index
+     * @param habit the {@link Habit} to be added to the database and listview
+     * @param index the index that the habit is to be inserted into the list
+     */
+    public void insertHabit(Habit habit, int index) {
+        // initialize our Collection reference to the CurrentUser's collection
+        final DocumentReference userDr = db.collection("users").document(currentUser);
+        final CollectionReference usersCr = userDr.collection("Habits");
+        // insert habit into list
+        habitList.add(index, habit);
+        // render changes
+        habitArrayAdapter.notifyDataSetChanged();
+
+        Map<String, Object> docData = new HashMap<>();
+        // update all further ordering for insertion
+        for (int i = index + 1; i < habitList.size(); i++) {
+            // add the ordering for the habit
+            docData.put("order", i);
+            usersCr.document(habitList.get(i).getTitle()).set(docData, SetOptions.merge());
+        }
+
+        // add our new habit to the index in firebase
+        usersCr.document(habit.getTitle()).set(habit);
+        docData.put("order", index);
+        usersCr.document(habit.getTitle()).set(docData, SetOptions.merge());
     }
 }
