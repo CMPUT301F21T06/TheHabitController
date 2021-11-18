@@ -80,6 +80,7 @@ public class EventsFragmentActivity extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FloatingActionButton fab = view.findViewById(R.id.eventFloatingActionButton);
         NavController navController = Navigation.findNavController(view);
         db = FirebaseFirestore.getInstance();
         eventList = new ArrayList<>();
@@ -91,13 +92,33 @@ public class EventsFragmentActivity extends Fragment {
         initializeEventList(view);
 
         // sets the listener for the button to add Events to the list
-        final FloatingActionButton fab = view.findViewById(R.id.eventFloatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 navController.navigate(R.id.action_events_to_addEventActivity);
             }
         });
+    }
+
+    /**
+     * A helper method for organizing when we return from adding or editing a {@link Event} in the list
+     * This will go through all possible {@link Bundle} objects to see what to do if a user
+     * has edited, added or deleted a {@link Event}
+     */
+    private void checkEventListChanges() {
+        // first get the bundle from the arguments
+        Bundle currBundle = getArguments();
+        // if it's empty, then we do nothing
+        if (currBundle != null) {
+            // see if we've added an event
+            Event addEvent = currBundle.getParcelable("addEvent");
+            if (addEvent != null) {
+                addEvent(addEvent);
+            }
+
+            // clear args so we refresh for next commands
+            getArguments().clear();
+        }
     }
 
     /**
@@ -120,6 +141,7 @@ public class EventsFragmentActivity extends Fragment {
                     eventList.add(doc.toObject(Event.class));
                 }
                 eventArrayAdapter.notifyDataSetChanged();
+                checkEventListChanges();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -142,6 +164,11 @@ public class EventsFragmentActivity extends Fragment {
         });
     }
 
+    /**
+     * Method for adding an event to our {@link FirebaseFirestore} database as well as our {@link Event}
+     * object list that's shown on the current fragment.
+     * @param event the {@link Event} to be added to the database and listview
+     */
     public void addEvent(Event event) {
         // initializes the Collection reference to the user's collection
         final DocumentReference userDr = db.collection("users").document(currentUser);
