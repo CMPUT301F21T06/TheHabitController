@@ -143,6 +143,9 @@ public class HabitsFragmentActivity extends Fragment {
             if (deleteIndex != -1) {
                 deleteHabit(deleteIndex);
             }
+
+            // clear args so we refresh for next commands
+            getArguments().clear();
         }
     }
 
