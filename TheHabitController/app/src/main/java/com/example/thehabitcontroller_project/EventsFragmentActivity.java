@@ -1,5 +1,6 @@
 package com.example.thehabitcontroller_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,45 +35,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link EventsFragmentActivity   //#newInstance} factory method to //commented out to fix error for now
- * create an instance of this fragment.
+ * A {@link Fragment} subclass to show the current {@link Event}s of the user
+ * This class links with {@link FirebaseFirestore} in order to store, pull and update its data
+ *
+ * @author Tyler
+ * @version 1.0.0
  */
 public class EventsFragmentActivity extends Fragment {
     private List<Event> eventList;
     private ArrayAdapter<Event> eventArrayAdapter;
     private ListView eventListView;
     private FirebaseFirestore db;
-    private String currentUser = "currentUser";
+    private String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
     final String DBTAG = "FireStore Call";
 
     public EventsFragmentActivity() {
         // Required empty public constructor
     }
 
-//    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-//     * @return A new instance of fragment Events.
-//     */
-//    // TODO: Rename and change types and number of parameters
-//    public static EventsFragmentActivity newInstance(String param1, String param2) {
-//        EventsFragmentActivity fragment = new EventsFragmentActivity();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
+    /**
+     * Override for extending the {@link Fragment} class that just
+     * calls its parent's implementation of onCreate()
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that inflates
+     * the fragment layout
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,6 +73,10 @@ public class EventsFragmentActivity extends Fragment {
         return inflater.inflate(R.layout.fragment_events, container, false);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class for handling
+     * building the structures after the view is created
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -90,41 +88,70 @@ public class EventsFragmentActivity extends Fragment {
         eventListView = view.findViewById(R.id.event_list);
         eventListView.setAdapter(eventArrayAdapter);
 
+        // initialize the event list from the FireStore database
         initializeEventList(view);
 
+        // sets the listener for the button to add Events to the list
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 navController.navigate(R.id.action_events_to_addEventActivity);
             }
         });
+    }
 
-        Bundle addEventBundle = getArguments();
-        if (!addEventBundle.isEmpty()) {
-            addEvent(addEventBundle.getParcelable("addEvent"));
+    /**
+     * A helper method for organizing when we return from adding or editing a {@link Event} in the list
+     * This will go through all possible {@link Bundle} objects to see what to do if a user
+     * has edited, added or deleted a {@link Event}
+     */
+    private void checkEventListChanges() {
+        // first get the bundle from the arguments
+        Bundle currBundle = getArguments();
+        // if it's empty, then we do nothing
+        if (currBundle != null) {
+            // see if we've added an event
+            Event addEvent = currBundle.getParcelable("addEvent");
+            if (addEvent != null) {
+                addEvent(addEvent);
+            }
+
+            // clear args so we refresh for next commands
+            getArguments().clear();
         }
     }
 
+    /**
+     * A helper method for setting up initializing our list of {@link Event} objects
+     * This method will look at our {@link FirebaseFirestore} database and build our
+     * list from the entries that exist in that collection.
+     * @param view the current {@link View} we are in
+     */
     private void initializeEventList(View view) {
+        // initializes the Collection reference to the user's collection
         final DocumentReference userDr = db.collection("users").document(currentUser);
         final CollectionReference usersCr = userDr.collection("Events");
 
         usersCr.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                // start with an empty list then add all events to the list
                 eventList.clear();
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                     eventList.add(doc.toObject(Event.class));
                 }
                 eventArrayAdapter.notifyDataSetChanged();
+                checkEventListChanges();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                // if Firestore call fails it stores a log in DBTAG
                 Log.d(DBTAG, "Was not able to get the data from Firestore to populate initial Event list");
             }
         });
 
+        // if changes occur in the FIreStore db it will clear the list and re-add the events
         usersCr.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -137,11 +164,20 @@ public class EventsFragmentActivity extends Fragment {
         });
     }
 
+    /**
+     * Method for adding an event to our {@link FirebaseFirestore} database as well as our {@link Event}
+     * object list that's shown on the current fragment.
+     * @param event the {@link Event} to be added to the database and listview
+     */
     public void addEvent(Event event) {
+        // initializes the Collection reference to the user's collection
         final DocumentReference userDr = db.collection("users").document(currentUser);
         final CollectionReference usersCr = userDr.collection("Events");
 
+        // adds the event to the list then renders changes
         eventArrayAdapter.add(event);
-        usersCr.add(event);
+        eventArrayAdapter.notifyDataSetChanged();
+        // adds event to the database
+        usersCr.document(event.getTitle()).set(event);
     }
 }

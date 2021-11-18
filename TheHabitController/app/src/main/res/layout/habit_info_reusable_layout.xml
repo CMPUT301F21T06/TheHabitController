@@ -10,7 +10,7 @@
         android:ems="10"
         android:hint="@string/addHabitTitleHint"
         android:inputType="textPersonName"
-        />
+        android:maxLength="20"/>
 
     <EditText
         android:id="@+id/habit_reason"
@@ -18,7 +18,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/addHabitReasonHint"
-        android:inputType="text"/>
+        android:inputType="text"
+        android:maxLength="30"/>
 
     <LinearLayout
         android:layout_width="match_parent"
