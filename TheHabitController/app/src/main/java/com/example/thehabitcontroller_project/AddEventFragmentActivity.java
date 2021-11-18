@@ -133,7 +133,7 @@ public class AddEventFragmentActivity extends Fragment{
                 String bitmap = "bitmapString"; // need to implement
 
                 // add the new event to the bundle
-                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, eventLocation, bitmap, inputDate));
+                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, bitmap));
 
                 // navigate to the event list view
                 Navigation.findNavController(view).navigate(

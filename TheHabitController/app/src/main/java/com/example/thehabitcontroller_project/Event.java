@@ -37,7 +37,7 @@ public class Event implements Parcelable {
      * @param location     Location the event occurred
      * @param bitmapString Photo of the event
      */
-    public Event(String title, String comment, String location, String bitmapString, Date dateEvent) {
+    public Event(String title, String comment, Date dateEvent, String location, String bitmapString) {
         this.title = title;
         this.comment = comment;
         this.dateEvent = dateEvent;

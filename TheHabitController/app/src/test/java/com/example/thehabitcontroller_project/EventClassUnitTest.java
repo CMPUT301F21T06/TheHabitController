@@ -29,7 +29,7 @@ public class EventClassUnitTest {
 //        Location l = new Location("Home");
 //        l.setLongitude(0);
 //        l.setLatitude(0);
-        Event e = new Event("Slept early", c, l, "bitmapString", d);
+        Event e = new Event("Slept early", c, d, l, "bitmapString");
 
         // make sure they are the same
         assertEquals(e.getTitle(),"Slept early");
@@ -46,7 +46,7 @@ public class EventClassUnitTest {
     @Test
     public void TestFormattedDate() {
         // initialize our event
-        Event e = new Event("Slept early", "Before midnight", "location", "bitmapString", new Date());
+        Event e = new Event("Slept early", "Before midnight", new Date(), "location", "bitmapString");
 
         // get the proper date format we want
         SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.US);
