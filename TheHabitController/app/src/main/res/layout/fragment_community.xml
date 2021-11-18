@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".CommunityFragmentActivity">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFollowing"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Community"
-        android:textSize="30sp"/>
+        android:layout_height="match_parent" />
 
 </FrameLayout>

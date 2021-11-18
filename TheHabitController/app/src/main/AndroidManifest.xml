@@ -10,9 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TheHabitController_Project">
         <activity
-            android:name=".FollowListActivity"
-            android:exported="true" />
-        <activity
             android:name=".UserProfileActivity"
             android:exported="true" />
         <activity
