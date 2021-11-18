@@ -256,7 +256,7 @@ public class HabitsFragmentActivity extends Fragment {
     /**
      * Method for inserting a habit to our {@link FirebaseFirestore} database as well as our {@link Habit}
      * object list that's shown on the current fragment at a certain index
-     * @param habit the {@link Habit} to be added to the database and listview
+     * @param habit the {@link Habit} to be inserted to the database and listview
      * @param index the index that the habit is to be inserted into the list
      */
     public void insertHabit(Habit habit, int index) {
