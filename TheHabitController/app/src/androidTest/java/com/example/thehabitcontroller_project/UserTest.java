@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import android.util.Log;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -28,7 +29,7 @@ public class UserTest {
         Thread.sleep(1000);
     }
 
-    //@Test
+    @Ignore
     public void testRegister() throws InterruptedException {
         String username=String.valueOf(Instant.now().getEpochSecond());
         User newUser = User.Register(username+"@test.com",username, "123456");
@@ -43,11 +44,11 @@ public class UserTest {
 
     @Test
     public void testSetUserName() throws InterruptedException{
-        User loginUser = new User("test@test.com", "asdf1234", new User.UserAuthListener() {
+        User loginUser = new User("test3@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User loginUser) {
                 User.setCurrentUser(loginUser);
-                User.setUserName("FTest LTest");
+                User.setUserName("Mary Brown");
 
                 try{
                     Thread.sleep(8000);
@@ -82,12 +83,12 @@ public class UserTest {
         fail("User with 'FTe' in display name is not found");
     }
 
-    @Test
+    @Ignore
     public void testUserFollow() throws InterruptedException{
         User tu= new User("test@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
-                User.getUserFromId("DSZZ433zN2TGDcfckcHXNTv2adH2", new User.UserDataListener() {
+                User.getUserFromId("BowQxXFCfDei5cR35yZ4Obrv2nG2", new User.UserDataListener() {
                     @Override
                     public void onDataChange(User result) {
                         Log.d("TestUserFollow",result.getUserName());
@@ -104,13 +105,13 @@ public class UserTest {
         Thread.sleep(4000);
     }
 
-    @Test
+    @Ignore
     public void testUserAcceptFollow() throws InterruptedException{
-        User tu= new User("test2@test.com", "asdf1234", new User.UserAuthListener() {
+        User tu= new User("test3@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
                 User.setCurrentUser(u);
-                User.getUserFromId("Zq9OMCHJbNbwb4T1wXhuESb9UyE2", new User.UserDataListener() {
+                User.getUserFromId("E5zQK50iYiPeBkJR1vxfTe11cgH3", new User.UserDataListener() {
                     @Override
                     public void onDataChange(User result) {
                         Log.d("TestUserAcceptFollow",result.getUserName());
@@ -127,7 +128,7 @@ public class UserTest {
         Thread.sleep(4000);
     }
 
-    @Test
+    @Ignore
     public void testUserFollowing() throws InterruptedException{
         ArrayList<User> a = new ArrayList<>();
         User tu= new User("test@test.com", "asdf1234", new User.UserAuthListener() {
@@ -165,7 +166,7 @@ public class UserTest {
         fail("User not found in the following list.");
     }
 
-    @Test
+    @Ignore
     public void testUserFollowReq() throws InterruptedException{
         ArrayList<User> a = new ArrayList<>();
         User tu= new User("test2@test.com", "asdf1234", new User.UserAuthListener() {
