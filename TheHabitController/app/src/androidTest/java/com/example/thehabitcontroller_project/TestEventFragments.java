@@ -127,8 +127,8 @@ public class TestEventFragments {
         solo.clickOnView(solo.getView(R.id.addEventButton));
 
         // assert that the entry is in the list
-//        solo.waitForText(testEvent);
-//        assertTrue(solo.searchText(testEvent)); // list currently not working
+        solo.waitForText(testEvent);
+        assertTrue(solo.searchText(testEvent));
 
         // cleanup db
         removeFromFireBase(testEvent, currentUsername);

@@ -151,6 +151,6 @@ public class EventsFragmentActivity extends Fragment {
         eventArrayAdapter.add(event);
         eventArrayAdapter.notifyDataSetChanged();
         // adds event to the database
-        usersCr.add(event);
+        usersCr.document(event.getTitle()).set(event);
     }
 }
