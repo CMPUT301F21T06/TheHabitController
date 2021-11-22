@@ -38,10 +38,10 @@ import java.util.Map;
  */
 
 public class User {
-    private FirebaseAuth mAuth;
-    private FirebaseUser fbUser;
-    private String email, name, userId;
+    private static FirebaseAuth mAuth;
+    private static FirebaseUser fbUser;
     private static User currentUser=null;
+    private String email, name, userId;
 
     public interface UserAuthListener {
         /**
@@ -107,20 +107,21 @@ public class User {
      * @param email the email used to login
      * @param password the password used to login
      */
-    public User(String email, String password, UserAuthListener listener){
+    public static void login(String email, String password, UserAuthListener listener){
         Log.d("User-Login", "start sign in");
-        this.mAuth = FirebaseAuth.getInstance();
+        User.mAuth = FirebaseAuth.getInstance();
         Log.d("User-Login", "got instance");
-        this.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        User.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 Log.d("User-Login", "task complete");
                 if (task.isSuccessful()){
                     Log.d("User-Login", "signInWithEmail:success");
-                    User.this.fbUser=User.this.mAuth.getCurrentUser();
-                    User.this.userId=User.this.fbUser.getUid();
-                    User.this.name=User.this.fbUser.getDisplayName();
-                    listener.onAuthComplete(User.this);
+                    User.fbUser=User.mAuth.getCurrentUser();
+                    User.setCurrentUser(new User(User.fbUser.getEmail(),
+                            User.fbUser.getDisplayName(),
+                            User.fbUser.getUid()));
+                    listener.onAuthComplete(User.getCurrentUser());
                 } else {
                     Log.w("User-Login", "signInWithEmail:failure", task.getException());
                     throw new SecurityException("Sign-in Failed.");
