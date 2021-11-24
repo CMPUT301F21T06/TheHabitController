@@ -39,7 +39,7 @@ import java.util.Map;
  * This class links with {@link FirebaseFirestore} in order to store, pull and update its data
  *
  * @author Steven
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class HabitsFragmentActivity extends Fragment {
 

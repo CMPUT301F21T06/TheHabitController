@@ -17,7 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/habitProgressBar"
         app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/black"></TextView>
+        android:textColor="@color/black"
+        ></TextView>
 
     <ProgressBar
         android:id="@+id/habitProgressBar"
