@@ -251,4 +251,54 @@ public class Habit implements Parcelable, Comparable<Habit>{
     public List<Boolean> getSchedule() {
         return schedule;
     }
+
+    /**
+     * Getter for the number of times this habit has been done
+     * @return the number of times as an int
+     */
+    public int getTimesFinished() {
+        return timesFinished;
+    }
+
+    /**
+     * Incrementer for the number of times this habit has been done
+     */
+    public void incrementTimesFinished() {
+        this.timesFinished++;
+    }
+
+    /**
+     * Incrementer method overload for the number of times this habit has been done
+     * @param num the number of times this habit has been done
+     */
+    public void incrementTimesFinished(int num) {
+        this.timesFinished += num;
+        if (this.timesFinished < 0) {
+            this.timesFinished = 0;
+        }
+    }
+
+    /**
+     * Setter for the number of times finished
+     * @param timesFinished the number of times this habit has been completed as an int
+     */
+    public void setTimesFinished(int timesFinished) {
+        this.timesFinished = timesFinished;
+    }
+
+    /**
+     * Getter for the total number of times this habit has been on the daily habits page
+     * @return the number of total times the habit has been shown to the user
+     */
+    public int getTotalShownTimes() {
+        return totalShownTimes;
+    }
+
+    /**
+     * Setter for the total times the habit has been shown on the daily habits page
+     * @param totalShownTimes the total times as int
+     */
+    public void setTotalShownTimes(int totalShownTimes) {
+        this.totalShownTimes = totalShownTimes;
+    }
 }
