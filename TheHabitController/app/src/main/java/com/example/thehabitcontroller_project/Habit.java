@@ -4,7 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -19,13 +22,14 @@ public class Habit implements Parcelable, Comparable<Habit>{
     private String reason;
     private Date dateStart;
     private boolean isPublic;
+    private List<Boolean> schedule;
 
     public Habit() {
         // empty constructor
     }
 
     /**
-     * Initializes a Habit with all of its parameters
+     * Initializes a Habit with all of its parameters not including its schedule
      * @param title     The title of a Habit
      * @param reason    The reason for the Habit
      * @param dateStart The start date of the habit
@@ -36,6 +40,23 @@ public class Habit implements Parcelable, Comparable<Habit>{
         this.reason = reason;
         this.dateStart = dateStart;
         this.isPublic = isPublic;
+        this.schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
+    }
+
+    /**
+     * Initializes a Habit with all of its parameters including schedule
+     * @param title     The title of a Habit
+     * @param reason    The reason for the Habit
+     * @param dateStart The start date of the habit
+     * @param isPublic  If the habit is public; shared or not
+     * @param schedule  Which days of the week the habit is to occur
+     */
+    public Habit(String title, String reason, Date dateStart, boolean isPublic, List<Boolean> schedule) {
+        this.title = title;
+        this.reason = reason;
+        this.dateStart = dateStart;
+        this.isPublic = isPublic;
+        this.schedule = schedule;
     }
 
     /**
@@ -48,6 +69,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
         reason = in.readString();
         dateStart = new Date(in.readLong());
         isPublic = in.readBoolean();
+        schedule = in.readArrayList(Boolean.class.getClassLoader());
     }
 
     /**
@@ -176,5 +198,21 @@ public class Habit implements Parcelable, Comparable<Habit>{
     @Override
     public int compareTo(Habit habit) {
         return title.compareTo(habit.getTitle());
+    }
+
+    /**
+     * setter for the schedule; what days of week the habit is to occur
+     * @param schedule  a {@link Boolean} {@link List} denoting which days of the week (true) the habit is to occur
+     */
+    public void setSchedule(List<Boolean> schedule) {
+        this.schedule = schedule;
+    }
+
+    /**
+     * Getter for the schedule of the habit; what days of week the habit is to occur
+     * @return  a {@link Boolean} {@link List} containing the days of the week (as True) the habit is to occur
+     */
+    public List<Boolean> getSchedule() {
+        return schedule;
     }
 }
