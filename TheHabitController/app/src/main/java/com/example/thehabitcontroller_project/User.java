@@ -124,7 +124,7 @@ public class User {
                     listener.onAuthComplete(User.getCurrentUser());
                 } else {
                     Log.w("User-Login", "signInWithEmail:failure", task.getException());
-                    throw new SecurityException("Sign-in Failed.");
+                    listener.onAuthComplete(null);
                 }
             }
         });

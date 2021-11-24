@@ -69,16 +69,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setUpNavigation();
         // register firebase authentication listener for login/logout operations
-        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser()!=null){
-                    Log.d("SignIn","AuthStateChanged");
-                } else {
-                    signIn();
-                }
-            }
-        });
+//        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                if (firebaseAuth.getCurrentUser()!=null){
+//                    Log.d("SignIn","AuthStateChanged");
+//                } else {
+//                    signIn();
+//                }
+//            }
+//        });
+//        if (User.getCurrentUser()==null){
+//            signIn();
+//        }
     }
 
     @Override
@@ -93,12 +96,15 @@ public class MainActivity extends AppCompatActivity {
      * Build and launch login intent
      */
     public void signIn() {
-        Intent loginIntent = AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build()))
-                .setIsSmartLockEnabled(false)
-                .build();
-        signInLauncher.launch(loginIntent);
+//        Intent loginIntent = AuthUI.getInstance()
+//                .createSignInIntentBuilder()
+//                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build()))
+//                .setIsSmartLockEnabled(false)
+//                .build();
+//        signInLauncher.launch(loginIntent);
+        Log.d("LoginDetect","Start Login Activity");
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     /**
