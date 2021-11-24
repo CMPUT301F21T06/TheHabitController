@@ -1,6 +1,8 @@
 package com.example.thehabitcontroller_project;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.text.HtmlCompat;
 
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
         TextInputLayout tiEmail = findViewById(R.id.tiLoginEmail);
         TextInputLayout tiPass = findViewById(R.id.tiLoginPassword);
         btnLogin.setOnClickListener(view -> {
+            ProgressBar pb=findViewById(R.id.pbLogin);
+            pb.setVisibility(View.VISIBLE);
             String strEmail,strPass;
             strEmail= Objects.requireNonNull(tiEmail.getEditText()).getText().toString();
             strPass= Objects.requireNonNull(tiPass.getEditText()).getText().toString();
@@ -47,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getBaseContext(), "Login Failed.", Toast.LENGTH_SHORT).show();
                     }
+                    pb.setVisibility(View.GONE);
                 });
             }
         });
