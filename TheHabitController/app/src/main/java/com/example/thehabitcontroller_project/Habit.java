@@ -23,6 +23,8 @@ public class Habit implements Parcelable, Comparable<Habit>{
     private Date dateStart;
     private boolean isPublic;
     private List<Boolean> schedule;
+    private int timesFinished;
+    private int totalShownTimes;
 
     public Habit() {
         // empty constructor
@@ -41,6 +43,8 @@ public class Habit implements Parcelable, Comparable<Habit>{
         this.dateStart = dateStart;
         this.isPublic = isPublic;
         this.schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
+        this.timesFinished = 0;
+        this.totalShownTimes = 0;
     }
 
     /**
@@ -57,6 +61,36 @@ public class Habit implements Parcelable, Comparable<Habit>{
         this.dateStart = dateStart;
         this.isPublic = isPublic;
         this.schedule = schedule;
+        this.timesFinished = 0;
+        this.totalShownTimes = 0;
+    }
+
+    /**
+     * Initializes a Habit with all of its parameters including schedule and times done stats
+     * @param title             The title of a Habit
+     * @param reason            The reason for the Habit
+     * @param dateStart         The start date of the habit
+     * @param isPublic          If the habit is public; shared or not
+     * @param schedule          Which days of the week the habit is to occur
+     * @param timesFinished     Number of times this habit has been completed
+     * @param totalShownTimes   Total number of times this habit had been shown
+     */
+    public Habit(
+            String title,
+            String reason,
+            Date dateStart,
+            boolean isPublic,
+            List<Boolean> schedule,
+            int timesFinished,
+            int totalShownTimes
+    ) {
+        this.title = title;
+        this.reason = reason;
+        this.dateStart = dateStart;
+        this.isPublic = isPublic;
+        this.schedule = schedule;
+        this.timesFinished = timesFinished;
+        this.totalShownTimes = totalShownTimes;
     }
 
     /**
@@ -70,6 +104,8 @@ public class Habit implements Parcelable, Comparable<Habit>{
         dateStart = new Date(in.readLong());
         isPublic = in.readBoolean();
         schedule = in.readArrayList(Boolean.class.getClassLoader());
+//        timesFinished = in.readInt();
+//        totalShownTimes = in.readInt();
     }
 
     /**

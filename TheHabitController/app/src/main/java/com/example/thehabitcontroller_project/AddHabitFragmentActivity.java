@@ -132,6 +132,11 @@ public class AddHabitFragmentActivity extends Fragment{
                 }
                 // get the other info user put in
                 String habitTitle = title.getText().toString();
+                // if no habit is entered, return
+                if (habitTitle.length() == 0) {
+                    getActivity().onBackPressed();
+                    return;
+                }
                 String habitReason = reason.getText().toString();
                 boolean isPublic = isPublicCheckBox.isChecked();
                 List<Boolean> schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));

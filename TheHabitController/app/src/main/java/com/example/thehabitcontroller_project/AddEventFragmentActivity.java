@@ -45,6 +45,7 @@ public class AddEventFragmentActivity extends Fragment{
     private Button addLocationButton;
     private String bitmapString;
     private Button addPhotoButton;
+    private Habit habit;
 
     public AddEventFragmentActivity() {
         // Required empty public constructor
@@ -85,6 +86,8 @@ public class AddEventFragmentActivity extends Fragment{
         setDateButton = view.findViewById(R.id.btPickDateEvent);
         addLocationButton = view.findViewById(R.id.addEventLocationButton);
         addPhotoButton = view.findViewById(R.id.addEventPhotoButton);
+
+        getHabitBundle(view);
 
         // set the onclicklistener for our set date button to pick a date
         setDateButton.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +153,22 @@ public class AddEventFragmentActivity extends Fragment{
                 getActivity().onBackPressed();
             }
         });
+    }
+
+    private void getHabitBundle(View view) {
+        Bundle currBundle = getArguments();
+        if (!currBundle.isEmpty()) {
+            // see if we've added a Habit
+            Habit currHabit = currBundle.getParcelable("Habit");
+            if (currHabit != null) {
+                this.habit = currHabit;
+            }
+
+            // TODO: Add functionality to this so habit is attached to event
+
+            // clear args so we refresh for next commands
+            getArguments().clear();
+        }
     }
 
     // attribute for the date listener for setting the date fragment on the page

@@ -20,7 +20,7 @@ import java.util.List;
  * @author Steven
  * @version 1.0.0
  */
-public class habitArrayAdapter extends ArrayAdapter<Habit> {
+public class HabitArrayAdapter extends ArrayAdapter<Habit> {
 
     private List<Habit> habitList;
     private Context context;
@@ -30,7 +30,7 @@ public class habitArrayAdapter extends ArrayAdapter<Habit> {
      * @param context   The context of the fragment it came from as {@link Context}
      * @param habitList the {@link List} of {@link Habit} objects
      */
-    public habitArrayAdapter(@NonNull Context context, @NonNull List<Habit> habitList) {
+    public HabitArrayAdapter(@NonNull Context context, @NonNull List<Habit> habitList) {
         super(context, 0, habitList);
         this.habitList = habitList;
         this.context = context;

@@ -16,21 +16,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
@@ -44,7 +39,7 @@ import java.util.Map;
  * This class links with {@link FirebaseFirestore} in order to store, pull and update its data
  *
  * @author Steven
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class HabitsFragmentActivity extends Fragment {
 
@@ -90,7 +85,7 @@ public class HabitsFragmentActivity extends Fragment {
         NavController navController = Navigation.findNavController(view);
         db = FirebaseFirestore.getInstance();
         habitList = new ArrayList<>();
-        habitArrayAdapter = new habitArrayAdapter(view.getContext(), habitList);
+        habitArrayAdapter = new HabitArrayAdapter(view.getContext(), habitList);
         habitListView = view.findViewById(R.id.habit_list);
         habitListView.setAdapter(habitArrayAdapter);
 
