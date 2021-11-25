@@ -41,25 +41,6 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     NavController navController;
 
-    private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
-            new FirebaseAuthUIActivityResultContract(),
-            new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>() {
-                @Override
-                public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
-                    if (result.getResultCode()==RESULT_OK){
-                        Log.d("SignIn","Activity result");
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        User.setCurrentUser(new User(user));
-                        if (result.getIdpResponse().isNewUser()){
-                            Log.d("SignIn","Found new user");
-                            User.firstLogin();
-                            Log.d("SignIn",User.getCurrentUser().getUserName());
-                        }
-                    }
-                }
-            }
-    );
-
     @Override
     /**
      * @param savedInstanceState will get the Bundle null when activity get starts first time and it will get in use when activity get changed
@@ -69,16 +50,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setUpNavigation();
         // register firebase authentication listener for login/logout operations
-        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser()!=null){
-                    Log.d("SignIn","AuthStateChanged");
-                } else {
-                    signIn();
-                }
-            }
-        });
+//        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                if (firebaseAuth.getCurrentUser()!=null){
+//                    Log.d("SignIn","AuthStateChanged");
+//                } else {
+//                    signIn();
+//                }
+//            }
+//        });
+//        if (User.getCurrentUser()==null){
+//            signIn();
+//        }
     }
 
     @Override
@@ -93,12 +77,15 @@ public class MainActivity extends AppCompatActivity {
      * Build and launch login intent
      */
     public void signIn() {
-        Intent loginIntent = AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build()))
-                .setIsSmartLockEnabled(false)
-                .build();
-        signInLauncher.launch(loginIntent);
+//        Intent loginIntent = AuthUI.getInstance()
+//                .createSignInIntentBuilder()
+//                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build()))
+//                .setIsSmartLockEnabled(false)
+//                .build();
+//        signInLauncher.launch(loginIntent);
+        Log.d("LoginDetect","Start Login Activity");
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     /**

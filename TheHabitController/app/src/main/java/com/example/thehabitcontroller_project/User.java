@@ -38,10 +38,10 @@ import java.util.Map;
  */
 
 public class User {
-    private FirebaseAuth mAuth;
-    private FirebaseUser fbUser;
-    private String email, name, userId;
+    private static FirebaseAuth mAuth;
+    private static FirebaseUser fbUser;
     private static User currentUser=null;
+    private String email, name, userId;
 
     public interface UserAuthListener {
         /**
@@ -107,23 +107,24 @@ public class User {
      * @param email the email used to login
      * @param password the password used to login
      */
-    public User(String email, String password, UserAuthListener listener){
+    public static void login(String email, String password, UserAuthListener listener){
         Log.d("User-Login", "start sign in");
-        this.mAuth = FirebaseAuth.getInstance();
+        User.mAuth = FirebaseAuth.getInstance();
         Log.d("User-Login", "got instance");
-        this.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        User.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 Log.d("User-Login", "task complete");
                 if (task.isSuccessful()){
                     Log.d("User-Login", "signInWithEmail:success");
-                    User.this.fbUser=User.this.mAuth.getCurrentUser();
-                    User.this.userId=User.this.fbUser.getUid();
-                    User.this.name=User.this.fbUser.getDisplayName();
-                    listener.onAuthComplete(User.this);
+                    User.fbUser=User.mAuth.getCurrentUser();
+                    User.setCurrentUser(new User(User.fbUser.getEmail(),
+                            User.fbUser.getDisplayName(),
+                            User.fbUser.getUid()));
+                    listener.onAuthComplete(User.getCurrentUser());
                 } else {
                     Log.w("User-Login", "signInWithEmail:failure", task.getException());
-                    throw new SecurityException("Sign-in Failed.");
+                    listener.onAuthComplete(null);
                 }
             }
         });
@@ -162,46 +163,33 @@ public class User {
      * @param email    email of the new user
      * @param username username of the new user
      * @param password password of the new user
+     * @param listener listener when the task completes
      * @return a User object of the new user
      * @throws SecurityException on failure
      */
-    public static User Register(String email, String username, String password){
+    public static void Register(String email, String username, String password, UserAuthListener listener){
+        final String TAG = "User-Signup";
+        Log.d(TAG,"Start user signup: "+email+" "+username);
         User newUser = new User();
         newUser.mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Log.d("User-Signup", "createUserWithEmail:success");
+                    Log.d(TAG, "createUserWithEmail:success");
                     newUser.fbUser = newUser.mAuth.getCurrentUser();
                     newUser.userId = newUser.fbUser.getUid();
-                    Map<String, Object> user = new HashMap<>();
-                    user.put("name", username);
-                    user.put("id", newUser.userId);
-                    newUser.setUserName(username);
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("users")
-                            .add(user)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Log.d("User-Signup", "User added with ID: " + documentReference.getId());
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w("User-Signup", "Error adding document", e);
-                                    throw new SecurityException("Sign-up Failed.");
-                                }
-                            });
+                    newUser.name = username;
+                    newUser.email = email;
+                    User.setCurrentUser(newUser);
+                    firstLogin(u -> listener.onAuthComplete(u));
+                    User.setUserName(username);
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("User-Signup", "createUserWithEmail:failure", task.getException());
-                    throw new SecurityException("Sign-up Failed.");
+                    // If sign up fails, reset currentUser
+                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                    User.setCurrentUser(null);
                 }
             }
         });
-        return newUser;
     };
 
     /**
@@ -228,7 +216,7 @@ public class User {
     /**
      * Process first login (new user) routines (create a new document in database to store extra user info)
      */
-    public static void firstLogin(){
+    public static void firstLogin(UserAuthListener listener){
         Log.d("UserFirstLogin","First Login Event "+currentUser.getUserId());
         // new user
         Map<String, Object> user = new HashMap<>();
@@ -245,13 +233,14 @@ public class User {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d("UserFisrtLogin", "User: " + currentUser.getUserId());
+                        listener.onAuthComplete(User.getCurrentUser());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("UserFisrtLogin", "Error adding document", e);
-                        throw new SecurityException("User failed first login process");
+                        listener.onAuthComplete(null);
                     }
                 });
     }
