@@ -28,6 +28,12 @@ import android.widget.TextView;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -98,7 +104,7 @@ public class AddEventFragmentActivity extends Fragment{
         addPhotoButton = view.findViewById(R.id.addEventPhotoButton);
         eventPhotoView = view.findViewById(R.id.eventPhotoView);
 
-//        getHabitBundle(view);
+        getHabitBundle(view);
 
         // set the onclicklistener for our set date button to pick a date
         setDateButton.setOnClickListener(new View.OnClickListener() {
@@ -153,6 +159,16 @@ public class AddEventFragmentActivity extends Fragment{
                 String eventComment = comment.getText().toString();
                 String eventLocation = "location";
 //                Location eventLocation = new Location("Home"); // need to implement
+
+                // initialize database call
+                FirebaseFirestore db =  FirebaseFirestore.getInstance();
+                String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                final DocumentReference userDr = db.collection("users").document(currentUser);
+                final CollectionReference usersCr = userDr.collection("Habits");
+                // set the habit's completed value by 1
+                usersCr.document(habit.getTitle()).update(habit.getTimesFinishedString(), FieldValue.increment(1));
+
+                // TODO: attach habit to the event
 
                 // add the new event to the bundle
                 addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, "photoString"));
