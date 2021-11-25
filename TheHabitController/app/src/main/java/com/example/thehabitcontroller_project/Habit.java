@@ -44,7 +44,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
         this.isPublic = isPublic;
         this.schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
         this.timesFinished = 0;
-        this.totalShownTimes = 0;
+        this.totalShownTimes = 1;
     }
 
     /**
@@ -62,7 +62,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
         this.isPublic = isPublic;
         this.schedule = schedule;
         this.timesFinished = 0;
-        this.totalShownTimes = 0;
+        this.totalShownTimes = 1;
     }
 
     /**
@@ -104,8 +104,8 @@ public class Habit implements Parcelable, Comparable<Habit>{
         dateStart = new Date(in.readLong());
         isPublic = in.readBoolean();
         schedule = in.readArrayList(Boolean.class.getClassLoader());
-//        timesFinished = in.readInt();
-//        totalShownTimes = in.readInt();
+        timesFinished = in.readInt();
+        totalShownTimes = in.readInt();
     }
 
     /**
@@ -250,5 +250,82 @@ public class Habit implements Parcelable, Comparable<Habit>{
      */
     public List<Boolean> getSchedule() {
         return schedule;
+    }
+
+    /**
+     * Getter for the number of times this habit has been done
+     * @return the number of times as an int
+     */
+    public int getTimesFinished() {
+        return timesFinished;
+    }
+
+    /**
+     * Getter for the name of the field "timesFinished" so we can increment it in the database
+     *
+     * @return {@link String} of the field name "timesFinished"
+     */
+    public String getTimesFinishedString() {
+        return "timesFinished";
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getTotalShownTimesString() { return "totalShownTimes"; }
+
+    /**
+     * Incrementer for the number of times this habit has been done
+     */
+    public void incrementTimesFinished() {
+        this.timesFinished++;
+    }
+
+    /**
+     * Incrementer method overload for the number of times this habit has been done
+     *
+     * @param num the number of times this habit has been done
+     */
+    public void incrementTimesFinished(int num) {
+        this.timesFinished += num;
+        if (this.timesFinished < 0) {
+            this.timesFinished = 0;
+        }
+    }
+
+    /**
+     * Setter for the number of times finished
+     * @param timesFinished the number of times this habit has been completed as an int
+     */
+    public void setTimesFinished(int timesFinished) {
+        this.timesFinished = timesFinished;
+    }
+
+    /**
+     * Getter for the total number of times this habit has been on the daily habits page
+     * @return the number of total times the habit has been shown to the user
+     */
+    public int getTotalShownTimes() {
+        return totalShownTimes;
+    }
+
+    /**
+     * Setter for the total times the habit has been shown on the daily habits page
+     * @param totalShownTimes the total times as int
+     */
+    public void setTotalShownTimes(int totalShownTimes) {
+        this.totalShownTimes = totalShownTimes;
+    }
+
+    /**
+     * Returns the percentage in int that this habit was completed
+     * @return the percentage as a whole number
+     */
+    public int getPercentageCompleted() {
+        int num = this.timesFinished < 0 ? 0 : this.timesFinished;
+        int deNom = this.totalShownTimes <= 0 ? 1 : this.totalShownTimes;
+        int total = (int)((double)num/(double)deNom * 100);
+        return total > 100 ? 100 : total;
     }
 }
