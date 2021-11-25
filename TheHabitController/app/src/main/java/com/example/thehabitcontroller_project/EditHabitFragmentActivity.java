@@ -89,6 +89,8 @@ public class EditHabitFragmentActivity extends Fragment {
         reason = view.findViewById(R.id.habit_reason);
         date = view.findViewById(R.id.date_editText);
         setDateButton = view.findViewById(R.id.btPickDate);
+        // can't change date after Habit is created
+        setDateButton.setVisibility(View.INVISIBLE);
         isPublicCheckBox = view.findViewById(R.id.habitPublicCheckBox);
         scheduleChipGroup = view.findViewById(R.id.weekly_chip_group);
 

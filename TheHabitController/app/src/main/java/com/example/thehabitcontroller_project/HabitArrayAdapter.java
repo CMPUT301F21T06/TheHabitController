@@ -57,9 +57,13 @@ public class HabitArrayAdapter extends ArrayAdapter<Habit> {
         ProgressBar habitProgress = view.findViewById(R.id.habitProgressBar);
         Habit h = habitList.get(position);
         habitTitle.setText(h.getTitle());
+
+        // get error-check the totalShownTimes
         if (h.getTotalShownTimes() == 0) {
             h.setTotalShownTimes(1);
         }
+
+        // set the progress bar percentage and colour depending on completion percentage
         int progressPercent = h.getPercentageCompleted();
         habitProgress.setProgress(progressPercent);
         if (progressPercent < 30) {
