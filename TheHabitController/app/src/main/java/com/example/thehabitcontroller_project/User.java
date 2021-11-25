@@ -483,7 +483,9 @@ public class User {
     /**
      * Sign out the user
      */
-    public void signOut(){
-        mAuth.signOut();
+    public static void signOut(){
+        if (currentUser!=null) {
+            currentUser.mAuth.signOut();
+        }
     }
 }

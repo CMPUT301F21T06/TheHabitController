@@ -25,7 +25,7 @@ public class UserTest {
             }
         });
         Thread.sleep(2000);
-        loginUser.signOut();
+        User.signOut();
         Thread.sleep(1000);
     }
 
@@ -53,7 +53,7 @@ public class UserTest {
 
                 }
 
-                User.getCurrentUser().signOut();
+                User.signOut();
             }
         });
         Thread.sleep(10000);
