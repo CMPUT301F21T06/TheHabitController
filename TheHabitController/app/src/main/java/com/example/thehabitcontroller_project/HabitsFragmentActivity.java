@@ -25,15 +25,25 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * A {@link Fragment} subclass to show the current {@link Habit}s of the user
@@ -160,6 +170,9 @@ public class HabitsFragmentActivity extends Fragment {
         final DocumentReference userDr = db.collection("users").document(currentUser);
         final CollectionReference usersCr = userDr.collection("Habits");
 
+        // update habit information
+        updateHabitsInfo();
+
         // set the listener for when the async call finishes
         usersCr.orderBy("order").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -195,6 +208,72 @@ public class HabitsFragmentActivity extends Fragment {
                 habitArrayAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    /**
+     * A helper method for updating habits information as they are read into this list
+     *
+     * Things this method updates for:
+     *    - The total number of times the habit has shown up in the daily habits list
+     */
+    private void updateHabitsInfo() {
+        // initialize our Collection reference to the CurrentUser's collection
+        final DocumentReference userDr = db.collection("users").document(currentUser);
+        final CollectionReference usersCr = userDr.collection("Habits");
+
+        // update Habits that are supposed to be done today by updating their "totalShownTimes" field
+        usersCr.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                // get the date of week index
+                int dowIndex = LocalDate.now().getDayOfWeek().getValue() - 1;
+                for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                    Habit h = doc.toObject(Habit.class);
+                    // if the habit's schedule matches today's date
+                    if (h.getSchedule().get(dowIndex)) {
+                        // calculate the total number of days
+                        Date habitStartDate = h.getDateStart();
+                        habitStartDate.getTime();
+                        int total = (int) getTotalNumDays(habitStartDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), h.getSchedule());
+                        // if the total is different, update this value for the habit
+                        if (total != h.getTotalShownTimes()) {
+                            usersCr.document(h.getTitle()).update(h.getTotalShownTimesString(), total);
+                        }
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // if we fail calling to FireStore, log it under our DBTAG
+                Log.d(DBTAG, "Was not able to get the data from Firestore to populate initial Habit list");
+            }
+        });
+    }
+
+    /**
+     * Gets the total number of days the habit was supposed to be shown between a start date and today's date
+     * while ignoring days that are not part of the {@link Habit}'s schedule
+     * @param start     the {@link LocalDate} start date
+     * @param schedule  the {@link List<Boolean>} schedule of the {@link Habit}
+     * @return
+     */
+    private static long getTotalNumDays(LocalDate start, List<Boolean> schedule) {
+        // get the DayOfWeek that we're supposed to ignore
+        List<DayOfWeek> ignore = new ArrayList<>();
+        for (int i = 0; i < schedule.size(); i++) {
+            if (!schedule.get(i).booleanValue()) {
+                DayOfWeek dow = DayOfWeek.of(i + 1);
+                ignore.add(dow);
+            }
+        }
+        // end date is today's date
+        LocalDate end = LocalDate.now();
+        // iterate over all days and grab the count
+        return Stream.iterate(start, d->d.plusDays(1))
+                .limit(start.until(end, ChronoUnit.DAYS))
+                .filter(d->!ignore.contains(d.getDayOfWeek()))
+                .count();
     }
 
     /**

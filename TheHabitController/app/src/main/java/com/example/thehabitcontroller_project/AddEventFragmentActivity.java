@@ -22,6 +22,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -134,6 +140,16 @@ public class AddEventFragmentActivity extends Fragment{
                 String eventLocation = "location";
 //                Location eventLocation = new Location("Home"); // need to implement
                 String bitmap = "bitmapString"; // need to implement
+
+                // initialize database call
+                FirebaseFirestore db =  FirebaseFirestore.getInstance();
+                String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                final DocumentReference userDr = db.collection("users").document(currentUser);
+                final CollectionReference usersCr = userDr.collection("Habits");
+                // set the habit's completed value by 1
+                usersCr.document(habit.getTitle()).update(habit.getTimesFinishedString(), FieldValue.increment(1));
+
+                // TODO: attach habit to the event
 
                 // add the new event to the bundle
                 addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, bitmap));

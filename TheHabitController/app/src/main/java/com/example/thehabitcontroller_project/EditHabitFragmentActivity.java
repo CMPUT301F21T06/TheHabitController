@@ -45,6 +45,7 @@ public class EditHabitFragmentActivity extends Fragment {
     private Button cancelButton;
     private Button deleteButton;
     private ChipGroup scheduleChipGroup;
+    private Habit selectedHabit;
 
 
     public EditHabitFragmentActivity() {
@@ -93,7 +94,7 @@ public class EditHabitFragmentActivity extends Fragment {
 
         // get the bundle from the habit fragment activity that has the selected habit info
         Bundle currHabitBundle = getArguments();
-        Habit selectedHabit = currHabitBundle.getParcelable("Habit");
+        selectedHabit = currHabitBundle.getParcelable("Habit");
         // set the current page with that info
         title.setText(selectedHabit.getTitle());
         reason.setText(selectedHabit.getReason());
@@ -160,16 +161,19 @@ public class EditHabitFragmentActivity extends Fragment {
                 }
                 String habitReason = reason.getText().toString();
                 boolean isPublic = isPublicCheckBox.isChecked();
+                // setup the habit's weekly schedule
                 List<Boolean> schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
                 for (int i = 0; i < scheduleChipGroup.getChildCount(); i++) {
                     Chip chip = (Chip) scheduleChipGroup.getChildAt(i);
                     schedule.set(i, chip.isChecked());
                 }
-
+                // get the habit's stats of completion
+                int timesDone = selectedHabit.getTimesFinished();
+                int totalTimesShown = selectedHabit.getTotalShownTimes();
                 // put the new habit in the bundle and the index of the habit from the original list
                 editHabitBundle.putParcelable(
                         "editedHabit",
-                        new Habit(habitTitle, habitReason, inputDate, isPublic, schedule)
+                        new Habit(habitTitle, habitReason, inputDate, isPublic, schedule, timesDone, totalTimesShown)
                 );
                 editHabitBundle.putInt("index", currHabitBundle.getInt("index"));
 

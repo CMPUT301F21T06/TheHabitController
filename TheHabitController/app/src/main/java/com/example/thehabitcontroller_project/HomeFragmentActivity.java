@@ -24,6 +24,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -37,7 +38,7 @@ import java.util.List;
  */
 public class HomeFragmentActivity extends Fragment {
 
-    private final int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+    private final int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
     private FirebaseFirestore db;
     private String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private List<Habit> dailyHabitList;

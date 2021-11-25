@@ -1,6 +1,8 @@
 package com.example.thehabitcontroller_project;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +60,17 @@ public class HabitArrayAdapter extends ArrayAdapter<Habit> {
         if (h.getTotalShownTimes() == 0) {
             h.setTotalShownTimes(1);
         }
-        habitProgress.setProgress((int)((double)h.getTimesFinished()/(double)h.getTotalShownTimes()*100));
+        int progressPercent = h.getPercentageCompleted();
+        habitProgress.setProgress(progressPercent);
+        if (progressPercent < 30) {
+            habitProgress.setProgressTintList(ColorStateList.valueOf(Color.RED));
+        }
+        else if (30 >= progressPercent && progressPercent > 70) {
+            habitProgress.setProgressTintList(ColorStateList.valueOf(Color.YELLOW));
+        }
+        else {
+            habitProgress.setProgressTintList(ColorStateList.valueOf(Color.GREEN));
+        }
 
         return view;
     }
