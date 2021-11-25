@@ -3,8 +3,12 @@ package com.example.thehabitcontroller_project;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,20 +17,23 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import android.content.pm.PackageManager;
 
 /**
  * A {@link Fragment} subclass to allow adding of {@link Event} objects to the event list
@@ -43,9 +50,12 @@ public class AddEventFragmentActivity extends Fragment{
     private Button cancelButton;
     private Location location;
     private Button addLocationButton;
-    private String bitmapString;
+    private Bitmap photo;
     private Button addPhotoButton;
+    private ImageView eventPhotoView;
     private Habit habit;
+
+    private static final int requestCode = 1;
 
     public AddEventFragmentActivity() {
         // Required empty public constructor
@@ -86,6 +96,7 @@ public class AddEventFragmentActivity extends Fragment{
         setDateButton = view.findViewById(R.id.btPickDateEvent);
         addLocationButton = view.findViewById(R.id.addEventLocationButton);
         addPhotoButton = view.findViewById(R.id.addEventPhotoButton);
+        eventPhotoView = view.findViewById(R.id.eventPhotoView);
 
 //        getHabitBundle(view);
 
@@ -128,15 +139,23 @@ public class AddEventFragmentActivity extends Fragment{
                     }
                 }
 
+                // set empty photo if no photo taken
+                String photoString = "";
+                if (eventPhotoView.getDrawable() != null) {
+                    photo = ((BitmapDrawable) eventPhotoView.getDrawable()).getBitmap();
+                    ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+                    photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
+                    photoString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+                }
+
                 // collects info entered by user
                 String event = title.getText().toString();
                 String eventComment = comment.getText().toString();
                 String eventLocation = "location";
 //                Location eventLocation = new Location("Home"); // need to implement
-                String bitmap = "bitmapString"; // need to implement
 
                 // add the new event to the bundle
-                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, bitmap));
+                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, "photoString"));
 
                 // navigate to the event list view
                 Navigation.findNavController(view).navigate(
@@ -151,6 +170,19 @@ public class AddEventFragmentActivity extends Fragment{
             @Override
             public void onClick(View view) {
                 getActivity().onBackPressed();
+            }
+        });
+
+        // set the listener to open the camera
+        addPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                // Create the intent and open the camera
+                Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if (photoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(photoIntent, requestCode);
+//                }
             }
         });
     }
@@ -182,4 +214,21 @@ public class AddEventFragmentActivity extends Fragment{
             date.setText(selectedDate);
         }
     };
+
+    // method stores and displays the photo
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+
+        // Match the pic id with requestCode
+        if (reqCode == requestCode) {
+
+            Bundle extras = data.getExtras();
+            // BitMap stores the image
+            Bitmap photoBitmap = (Bitmap) extras.get("data");
+
+            // Display the image
+            eventPhotoView.setImageBitmap(photoBitmap);
+            eventPhotoView.setVisibility(View.VISIBLE);
+        }
+    }
 }

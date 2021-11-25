@@ -1,12 +1,18 @@
 package com.example.thehabitcontroller_project;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +22,7 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.chip.Chip;
 
+import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,12 +43,18 @@ public class EditEventFragmentActivity extends Fragment {
     private EditText title;
     private EditText comment;
     private TextView date;
-    private EditText location;
-    private EditText bitmapString;
+    private Bitmap photo;
+    private String photoString;
+    private ImageView eventPhotoView;
+
     private Button setDateButton;
+    private Button setLocationButton;
+    private Button setPhotoButton;
     private Button saveButton;
     private Button cancelButton;
     private Button deleteButton;
+
+    private static final int requestCode = 1;
 
     public EditEventFragmentActivity() {
         // Required empty public constructor
@@ -83,7 +96,10 @@ public class EditEventFragmentActivity extends Fragment {
         title = view.findViewById(R.id.event_title);
         comment = view.findViewById(R.id.event_comment);
         date = view.findViewById(R.id.dateEvent_editText);
+        eventPhotoView = view.findViewById(R.id.eventPhotoView);
         setDateButton = view.findViewById(R.id.btPickDateEvent);
+        setLocationButton = view.findViewById(R.id.addEventLocationButton);
+        setPhotoButton = view.findViewById(R.id.addEventPhotoButton);
 
         // get the bundle from the event fragment activity that has the selected event info
         Bundle currEventBundle = getArguments();
@@ -92,6 +108,12 @@ public class EditEventFragmentActivity extends Fragment {
         title.setText(selectedEvent.getTitle());
         comment.setText(selectedEvent.getComment());
         date.setText(selectedEvent.getFormattedDate());
+
+        if (selectedEvent.getPhoto() != null) {
+            eventPhotoView.setImageBitmap(selectedEvent.getPhoto());
+            eventPhotoView.setVisibility(View.VISIBLE);
+            photoString = selectedEvent.getPhotoString();
+        }
 
         // set the onclicklistener for our set date button to pick a date
         setDateButton.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +135,28 @@ public class EditEventFragmentActivity extends Fragment {
                 date.show(getParentFragmentManager(), "Date Picker");
             }
         });
+
+        // set the listener to open the camera
+        setPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                // Create the intent and open the camera
+                Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if (photoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(photoIntent, requestCode);
+//                }
+            }
+        });
+
+        Bitmap image = photo;
+        if (image != null) {
+            try {
+                selectedEvent.setPhoto(image);
+            }
+            catch (IllegalArgumentException e) {
+            }
+        }
 
         // set listener for the cancel button; just go back
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +183,7 @@ public class EditEventFragmentActivity extends Fragment {
                         e.printStackTrace();
                     }
                 }
+
                 // get the edited event's info
                 String eventTitle = title.getText().toString();
                 // if no event title is entered, return
@@ -149,12 +194,11 @@ public class EditEventFragmentActivity extends Fragment {
                 String eventComment = comment.getText().toString();
 
                 String location = "";
-                String bitmapString = "";
 
                 // put the new event in the bundle and the index of the event from the original list
                 editEventBundle.putParcelable(
                         "editedEvent",
-                        new Event(eventTitle, eventComment, inputDate, location, bitmapString)
+                        new Event(eventTitle, eventComment, inputDate, location, selectedEvent.getPhotoString())
                 );
                 editEventBundle.putInt("index", currEventBundle.getInt("index"));
 
@@ -196,4 +240,21 @@ public class EditEventFragmentActivity extends Fragment {
             date.setText(selectedDate);
         }
     };
+
+    // method stores and displays the photo
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+
+        // Match the pic id with requestCode
+        if (reqCode == requestCode) {
+
+            Bundle extras = data.getExtras();
+            // BitMap stores the image
+            photo = (Bitmap) extras.get("data");
+
+            // Display the image
+            eventPhotoView.setImageBitmap(photo);
+            eventPhotoView.setVisibility(View.VISIBLE);
+        }
+    }
 }
