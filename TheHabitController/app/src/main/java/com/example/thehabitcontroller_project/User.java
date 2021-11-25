@@ -336,7 +336,7 @@ public class User {
      * Send a follow request to target user
      * @param target the target user
      */
-    public static void requestFollow(User target) {
+    public static void requestFollow(User target) throws RuntimeException{
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Log.d("RequestFollow",target.getUserId());
         db.collection("users").whereEqualTo("id",target.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -355,10 +355,35 @@ public class User {
         });
     }
 
+    /**
+     * Unfollow target user
+     * @param target the target user
+     */
+    public static void unfollow(User target) throws RuntimeException{
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Log.d("Unfollow",target.getUserId());
+        db.collection("users").whereEqualTo("id",target.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    Log.d("UserUnfollow","Complete fetching target user data");
+                    DocumentReference d = task.getResult().getDocuments().get(0).getReference();
+                    Map<String,Object> upd= new HashMap<>();
+                    upd.put("follower",FieldValue.arrayRemove(currentUser.userId));
+                    d.update(upd);
+                } else {
+                    throw new RuntimeException("Failed to unfollow user "+target.userId);
+                }
+            }
+        });
+    }
+
+
+
     /** Accept a follow request from user
      * @param user user to add into follower list
      */
-    public static void acceptFollow(User user){
+    public static void acceptFollow(User user) throws RuntimeException{
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").whereEqualTo("id", currentUser.userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -372,7 +397,29 @@ public class User {
                     upd.put("followReq",FieldValue.arrayRemove(user.userId));
                     d.update(upd);
                 }else{
-                    throw new RuntimeException("Failed to accpet user "+user.userId);
+                    throw new RuntimeException("Failed to accept user "+user.userId);
+                }
+            }
+        });
+    }
+
+    /** Reject a follow request from user
+     * @param user user to remove from follow requests list
+     */
+    public static void rejectFollow(User user) throws RuntimeException{
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(currentUser.userId)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    Log.d("UserRejectFollow","Complete fetching current user data");
+                    DocumentReference d = task.getResult().getReference();
+                    Map<String,Object> upd= new HashMap<>();
+                    upd.put("followReq",FieldValue.arrayRemove(user.userId));
+                    d.update(upd);
+                }else{
+                    throw new RuntimeException("Failed to reject user "+user.userId);
                 }
             }
         });
