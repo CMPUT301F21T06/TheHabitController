@@ -3,6 +3,7 @@ package com.example.thehabitcontroller_project;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import android.graphics.Bitmap;
 import android.location.Location;
 
 import java.text.SimpleDateFormat;
@@ -29,7 +30,8 @@ public class EventClassUnitTest {
 //        Location l = new Location("Home");
 //        l.setLongitude(0);
 //        l.setLatitude(0);
-        Event e = new Event("Slept early", c, d, l, "bitmapString");
+//        Bitmap b = Bitmap.createBitmap(100,100,Bitmap.Config.ARGB_8888);
+        Event e = new Event("Slept early", c, d, l, "photoString");
 
         // make sure they are the same
         assertEquals(e.getTitle(),"Slept early");
@@ -37,7 +39,7 @@ public class EventClassUnitTest {
         assert e.getComment().length() <= 30; // max comment length is 20
         assertEquals(e.getDateEvent(), d);
         assertEquals(e.getLocation(), l);
-        assertEquals(e.getBitmapString(), "bitmapString");
+        assertEquals(e.getPhotoString(), "photoString");
     }
 
     /**
@@ -45,8 +47,9 @@ public class EventClassUnitTest {
      */
     @Test
     public void TestFormattedDate() {
+//        Bitmap b = Bitmap.createBitmap(100,100,Bitmap.Config.ARGB_8888);
         // initialize our event
-        Event e = new Event("Slept early", "Before midnight", new Date(), "location", "bitmapString");
+        Event e = new Event("Slept early", "Before midnight", new Date(), "location", "photoString");
 
         // get the proper date format we want
         SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.US);
