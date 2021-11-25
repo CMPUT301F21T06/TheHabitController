@@ -147,11 +147,13 @@ public class AddEventFragmentActivity extends Fragment{
 
                 // set empty photo if no photo taken
                 String photoString = "";
+                // display photo if there is one
                 if (eventPhotoView.getDrawable() != null) {
                     photo = ((BitmapDrawable) eventPhotoView.getDrawable()).getBitmap();
+
                     ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
                     photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
-                    photoString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+//                    photoString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
                 }
 
                 // collects info entered by user
@@ -171,7 +173,7 @@ public class AddEventFragmentActivity extends Fragment{
                 // TODO: attach habit to the event
 
                 // add the new event to the bundle
-                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, "photoString"));
+                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, photoString));
 
                 // navigate to the event list view
                 Navigation.findNavController(view).navigate(
