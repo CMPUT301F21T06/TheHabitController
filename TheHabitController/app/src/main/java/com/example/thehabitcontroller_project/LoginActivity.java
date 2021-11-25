@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.text.HtmlCompat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             strPass= Objects.requireNonNull(tiPass.getEditText()).getText().toString();
             if (strEmail.isEmpty()||strPass.isEmpty()){
                 Toast.makeText(getBaseContext(), "Email and password cannot be empty.", Toast.LENGTH_SHORT).show();
+                pb.setVisibility(View.GONE);
             } else {
                 User.login(strEmail, strPass, u -> {
                     Log.d(TAG,"Auth Complete");
@@ -58,6 +60,24 @@ public class LoginActivity extends AppCompatActivity {
         });
         tvRegister.setOnClickListener(view -> {
             // Register activity
+            Intent intent = new Intent(this,RegisterActivity.class);
+            startActivity(intent);
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Dispatch onResume() to fragments.  Note that for better inter-operation
+     * with older versions of the platform, at the point of this call the
+     * fragments attached to the activity are <em>not</em> resumed.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG,"LoginActivity resumed.");
+        if (User.getCurrentUser()!=null){
+            finish();
+        }
     }
 }

@@ -41,25 +41,6 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     NavController navController;
 
-    private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
-            new FirebaseAuthUIActivityResultContract(),
-            new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>() {
-                @Override
-                public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
-                    if (result.getResultCode()==RESULT_OK){
-                        Log.d("SignIn","Activity result");
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        User.setCurrentUser(new User(user));
-                        if (result.getIdpResponse().isNewUser()){
-                            Log.d("SignIn","Found new user");
-                            User.firstLogin();
-                            Log.d("SignIn",User.getCurrentUser().getUserName());
-                        }
-                    }
-                }
-            }
-    );
-
     @Override
     /**
      * @param savedInstanceState will get the Bundle null when activity get starts first time and it will get in use when activity get changed
