@@ -67,7 +67,7 @@ public class Event implements Parcelable {
 //        location = new Location("Home");
 //        location.setLongitude(0);
 //        location.setLatitude(0);
-        photo = in.readParcelable(Bitmap.class.getClassLoader());
+        photoString = in.readString();
     }
 
     /**
