@@ -48,7 +48,9 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         }
         // shows the title on the layout
         TextView eventTitle = view.findViewById(R.id.event_name);
-        eventTitle.setText(eventList.get(position).getTitle());
+        Event e = eventList.get(position);
+        eventTitle.setText(e.getTitle());
+
         return view;
     }
 }
