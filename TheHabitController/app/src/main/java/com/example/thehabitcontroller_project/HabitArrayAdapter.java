@@ -65,7 +65,7 @@ public class HabitArrayAdapter extends ArrayAdapter<Habit> {
         if (progressPercent < 30) {
             habitProgress.setProgressTintList(ColorStateList.valueOf(Color.RED));
         }
-        else if (30 >= progressPercent && progressPercent > 70) {
+        else if (30 <= progressPercent && progressPercent < 70) {
             habitProgress.setProgressTintList(ColorStateList.valueOf(Color.YELLOW));
         }
         else {
