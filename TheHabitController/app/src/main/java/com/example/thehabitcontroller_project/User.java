@@ -1,5 +1,7 @@
 package com.example.thehabitcontroller_project;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -37,11 +39,26 @@ import java.util.Map;
  * @version 1.0.0
  */
 
-public class User {
+public class User implements Parcelable, Comparable<User> {
     private static FirebaseAuth mAuth;
     private static FirebaseUser fbUser;
     private static User currentUser=null;
     private String email, name, userId;
+
+    /**
+     * Parcel creator
+     */
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public interface UserAuthListener {
         /**
@@ -131,19 +148,29 @@ public class User {
     }
 
     /**
-     * Create empty User object, not logged in.
+     * Create empty User object.
      */
     public User(){
         this.mAuth = FirebaseAuth.getInstance();
     }
 
     /**
-     * Create User object, do not log in.
+     * Create User object, non-local users.
      */
     public User(String email, String name, String userId) {
         this.email=email;
         this.name=name;
         this.userId=userId;
+    }
+
+    /**
+     * Create User object from Parcel
+     * @param parcel
+     */
+    protected User(Parcel parcel){
+        email=parcel.readString();
+        name=parcel.readString();
+        userId=parcel.readString();
     }
 
     /**
@@ -534,5 +561,22 @@ public class User {
         if (currentUser!=null) {
             currentUser.mAuth.signOut();
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(email);
+        parcel.writeString(name);
+        parcel.writeString(userId);
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return userId.compareTo(user.getUserId());
     }
 }

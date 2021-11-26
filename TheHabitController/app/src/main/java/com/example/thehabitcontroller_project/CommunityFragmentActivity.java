@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,7 +67,10 @@ public class CommunityFragmentActivity extends Fragment {
         UserArrayAdapter.ClickListener clickListener = new UserArrayAdapter.ClickListener() {
             @Override
             public void onItemClick(int pos, User itemUser) {
-
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("user",itemUser);
+                NavController navController= Navigation.findNavController(view);
+                navController.navigate(R.id.action_community_to_viewUserHabitFragment,bundle);
             }
         };
 
