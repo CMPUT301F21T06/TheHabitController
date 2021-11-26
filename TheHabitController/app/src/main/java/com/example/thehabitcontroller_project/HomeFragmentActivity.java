@@ -113,7 +113,7 @@ public class HomeFragmentActivity extends Fragment {
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                     Habit habit = doc.toObject(Habit.class);
                     // if the habit is supposed to be scheduled for today, add to our daily list
-                    if (habit.getSchedule().get(dayOfWeekIndex)) {
+                    if (habit != null && habit.getSchedule().get(dayOfWeekIndex)) {
                         dailyHabitList.add(habit);
                     }
                 }
