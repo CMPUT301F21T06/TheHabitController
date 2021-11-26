@@ -65,6 +65,7 @@ public class HomeFragmentActivity extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Today's Habits");
 
         // get our initial field values
         NavController navController = Navigation.findNavController(view);
