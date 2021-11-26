@@ -81,6 +81,7 @@ public class AddHabitFragmentActivity extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Add A New Habit");
 
         // initialize all UI references to be used later
         addButton = view.findViewById(R.id.addHabitButton);

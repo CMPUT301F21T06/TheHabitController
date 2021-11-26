@@ -97,6 +97,8 @@ public class EditHabitFragmentActivity extends Fragment {
         // get the bundle from the habit fragment activity that has the selected habit info
         Bundle currHabitBundle = getArguments();
         selectedHabit = currHabitBundle.getParcelable("Habit");
+        // set the title specific to the Habit
+        getActivity().setTitle("'" + selectedHabit.getTitle() + "' Habit");
         // set the current page with that info
         title.setText(selectedHabit.getTitle());
         reason.setText(selectedHabit.getReason());
