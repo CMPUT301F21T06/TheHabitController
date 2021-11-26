@@ -33,16 +33,22 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
      * (custom ViewHolder).
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
+        private final TextView textUsername;
+        private final TextView textEmail;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-            textView = (TextView) view.findViewById(R.id.textUsername);
+            textUsername = (TextView) view.findViewById(R.id.textUsername);
+            textEmail = (TextView) view.findViewById(R.id.textEmail);
         }
 
-        public TextView getTextView() {
-            return textView;
+        public TextView getTextUsername() {
+            return textUsername;
+        }
+
+        public TextView getTextEmail() {
+            return textEmail;
         }
     }
 
@@ -74,7 +80,8 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.getTextView().setText(userList.get(position).getUserName());
+        viewHolder.getTextUsername().setText(userList.get(position).getUserName());
+        viewHolder.getTextEmail().setText(userList.get(position).getEmail());
         viewHolder.itemView.setOnClickListener(view ->
                 clickListener.onItemClick(position, userList.get(position))
         );

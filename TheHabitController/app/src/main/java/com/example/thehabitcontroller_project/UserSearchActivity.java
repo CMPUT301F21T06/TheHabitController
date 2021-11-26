@@ -1,5 +1,6 @@
 package com.example.thehabitcontroller_project;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.TaskStackBuilder;
 import androidx.navigation.NavController;
@@ -7,12 +8,14 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -36,7 +39,25 @@ public class UserSearchActivity extends AppCompatActivity {
         UserArrayAdapter.ClickListener clickListener = new UserArrayAdapter.ClickListener() {
             @Override
             public void onItemClick(int pos, User itemUser) {
-
+                AlertDialog alertDialog = new AlertDialog.Builder(UserSearchActivity.this)
+                        .setTitle("Follow")
+                        .setMessage("Send follow request to user \""+itemUser.getUserName()+"\"?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                User.requestFollow(itemUser);
+                                Toast.makeText(UserSearchActivity.this,
+                                        "Request sent.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                return;
+                            }
+                        })
+                        .create();
+                alertDialog.show();
             }
         };
         userArrayAdapter = new UserArrayAdapter(this, userArrayList, clickListener);
@@ -54,13 +75,10 @@ public class UserSearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                User.searchUser(query, new User.UserSearchListener() {
-                    @Override
-                    public void onSearchComplete(ArrayList<User> result) {
-                        userArrayList.clear();
-                        userArrayList.addAll(result);
-                        userArrayAdapter.notifyDataSetChanged();
-                    }
+                User.searchUser(query, result -> {
+                    userArrayList.clear();
+                    userArrayList.addAll(result);
+                    userArrayAdapter.notifyDataSetChanged();
                 });
                 return false;
             }
