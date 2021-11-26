@@ -19,9 +19,6 @@
         <action
             android:id="@+id/action_home2_to_community"
             app:destination="@id/community" />
-        <action
-            android:id="@+id/action_home2_to_addEventActivity"
-            app:destination="@id/addEventActivity" />
     </fragment>
 
     <fragment

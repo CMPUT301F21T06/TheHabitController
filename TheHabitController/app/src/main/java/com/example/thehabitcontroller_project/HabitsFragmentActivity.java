@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,40 +16,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.model.Document;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -65,9 +51,11 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
     private List<Habit> habitList;
     private HabitRecyclerAdapter habitRecyclerAdapter;
     private RecyclerView habitRecyclerView;
-    private FirebaseFirestore db;
-    private String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    final String DBTAG = "FireStore Call";
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private final DocumentReference userDr = db.collection("users").document(currentUser);
+    private final CollectionReference usersCr = userDr.collection("Habits");
+    private final String DBTAG = "FireStore Call";
     private NavController navController;
 
     public HabitsFragmentActivity() {
@@ -175,10 +163,6 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
      * @param view the current {@link View} we are in
      */
     private void initializeHabitList(View view) {
-        // initialize our Collection reference to the CurrentUser's collection
-        final DocumentReference userDr = db.collection("users").document(currentUser);
-        final CollectionReference usersCr = userDr.collection("Habits");
-
         // update habit information
         updateHabitsInfo();
 
@@ -245,10 +229,6 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
      *    - The total number of times the habit has shown up in the daily habits list
      */
     private void updateHabitsInfo() {
-        // initialize our Collection reference to the CurrentUser's collection
-        final DocumentReference userDr = db.collection("users").document(currentUser);
-        final CollectionReference usersCr = userDr.collection("Habits");
-
         // update Habits that are supposed to be done today by updating their "totalShownTimes" field
         usersCr.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -290,7 +270,7 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
         // get the DayOfWeek that we're supposed to ignore
         List<DayOfWeek> ignore = new ArrayList<>();
         for (int i = 0; i < schedule.size(); i++) {
-            if (!schedule.get(i).booleanValue()) {
+            if (!schedule.get(i)) {
                 DayOfWeek dow = DayOfWeek.of(i + 1);
                 ignore.add(dow);
             }
@@ -310,9 +290,6 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
      * @param habit the {@link Habit} to be added to the database and listview
      */
     public void addHabit(Habit habit) {
-        // initialize our Collection reference to the CurrentUser's collection
-        final DocumentReference userDr = db.collection("users").document(currentUser);
-        final CollectionReference usersCr = userDr.collection("Habits");
         // add the habit to our list
         habitList.add(habit);
         // render changes
@@ -335,11 +312,7 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
      * @param index the current index of the item to delete.
      */
     public void deleteHabit(int index) {
-        // initialize our Collection reference to the CurrentUser's collection
-        final DocumentReference userDr = db.collection("users").document(currentUser);
-        final CollectionReference usersCr = userDr.collection("Habits");
         // get the habit that we are deleting
-//        Habit h = habitArrayAdapter.getItem(index);
         Habit h = habitList.get(index);
         // also delete from database
         usersCr.document(h.getTitle()).delete();
@@ -364,14 +337,10 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
      * @param index the index that the habit is to be inserted into the list
      */
     public void insertHabit(Habit habit, int index) {
-        // initialize our Collection reference to the CurrentUser's collection
-        final DocumentReference userDr = db.collection("users").document(currentUser);
-        final CollectionReference usersCr = userDr.collection("Habits");
         // insert habit into list
         habitList.add(index, habit);
         // render changes
         habitRecyclerAdapter.notifyItemInserted(index);
-//        habitRecyclerAdapter.notifyDataSetChanged();
 
         Map<String, Object> docData = new HashMap<>();
         // update all further ordering for insertion

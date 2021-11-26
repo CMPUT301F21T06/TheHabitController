@@ -11,11 +11,11 @@
         android:title="Habits"
         android:icon="@drawable/habits"
         />
-    <item
-        android:id="@+id/events"
-        android:title="Events"
-        android:icon="@drawable/events"
-        />
+<!--    <item-->
+<!--        android:id="@+id/events"-->
+<!--        android:title="Events"-->
+<!--        android:icon="@drawable/events"-->
+<!--        />-->
     <item
         android:id="@+id/community"
         android:title="Community"
