@@ -1,5 +1,6 @@
 package com.example.thehabitcontroller_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,16 +15,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CommunityFragmentActivity#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class CommunityFragmentActivity extends Fragment {
 
     private UserArrayAdapter userArrayAdapter;
+    private ArrayList<User> userArrayList;
 
     public CommunityFragmentActivity() {
         // Required empty public constructor
@@ -57,7 +59,7 @@ public class CommunityFragmentActivity extends Fragment {
         RecyclerView rvFollowing = view.findViewById(R.id.rvFollowing);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getContext());
         rvFollowing.setLayoutManager(layoutManager);
-        ArrayList<User> userArrayList=new ArrayList<>();
+        userArrayList=new ArrayList<>();
 
         // item click listener
         UserArrayAdapter.ClickListener clickListener = new UserArrayAdapter.ClickListener() {
@@ -77,8 +79,18 @@ public class CommunityFragmentActivity extends Fragment {
                 userArrayAdapter.notifyDataSetChanged();
             }
         });
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvFollowing.getContext(),
                 layoutManager.getOrientation());
         rvFollowing.addItemDecoration(dividerItemDecoration);
+
+        FloatingActionButton fabSearch = view.findViewById(R.id.fabSearch);
+        fabSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),UserSearchActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
