@@ -7,6 +7,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -22,6 +28,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -30,6 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.model.Document;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -50,16 +58,17 @@ import java.util.stream.Stream;
  * This class links with {@link FirebaseFirestore} in order to store, pull and update its data
  *
  * @author Steven
- * @version 1.1.0
+ * @version 1.2.0
  */
-public class HabitsFragmentActivity extends Fragment {
+public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAdapter.OnHabitItemClickedListener {
 
     private List<Habit> habitList;
-    private ArrayAdapter<Habit> habitArrayAdapter;
-    private ListView habitListView;
+    private HabitRecyclerAdapter habitRecyclerAdapter;
+    private RecyclerView habitRecyclerView;
     private FirebaseFirestore db;
     private String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
     final String DBTAG = "FireStore Call";
+    private NavController navController;
 
     public HabitsFragmentActivity() {
         // Required empty public constructor
@@ -90,30 +99,30 @@ public class HabitsFragmentActivity extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Habits List");
 
         // First grab reference to all the UI objects we will be using
         FloatingActionButton fab = view.findViewById(R.id.habitFloatingActionButton);
-        NavController navController = Navigation.findNavController(view);
+        navController = Navigation.findNavController(view);
         db = FirebaseFirestore.getInstance();
         habitList = new ArrayList<>();
-        habitArrayAdapter = new HabitArrayAdapter(view.getContext(), habitList);
-        habitListView = view.findViewById(R.id.habit_list);
-        habitListView.setAdapter(habitArrayAdapter);
+        habitRecyclerAdapter = new HabitRecyclerAdapter(habitList, this);
+        habitRecyclerView = view.findViewById(R.id.habit_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        habitRecyclerView.setLayoutManager(layoutManager);
+
+        ItemTouchHelper.Callback callback = new HabitItemTouchHelper(habitRecyclerAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        habitRecyclerAdapter.setTouchHelper(itemTouchHelper);
+        itemTouchHelper.attachToRecyclerView(habitRecyclerView);
+
+        habitRecyclerView.setAdapter(habitRecyclerAdapter);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(habitRecyclerView.getContext(),
+                layoutManager.getOrientation());
+        habitRecyclerView.addItemDecoration(dividerItemDecoration);
 
         // initialize our habit list from the FireStore database
         initializeHabitList(view);
-
-        // set the listener for any user tapping on an item in the list of Habits
-        habitListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Bundle editHabitBundle = new Bundle();
-                Habit h = habitArrayAdapter.getItem(i);
-                editHabitBundle.putParcelable("Habit", h);
-                editHabitBundle.putInt("index", i);
-                navController.navigate(R.id.action_habits_to_editHabitFragmentActivity, editHabitBundle);
-            }
-        });
 
         // set the listener for our button that adds new Habits to the list
         fab.setOnClickListener(new View.OnClickListener() {
@@ -184,7 +193,7 @@ public class HabitsFragmentActivity extends Fragment {
                     habitList.add(doc.toObject(Habit.class));
                 }
                 // render changes
-                habitArrayAdapter.notifyDataSetChanged();
+                habitRecyclerAdapter.notifyDataSetChanged();
 
                 // check here if we've come back from editing/adding habits and make changes
                 checkHabitListChanges();
@@ -197,17 +206,36 @@ public class HabitsFragmentActivity extends Fragment {
             }
         });
 
-        // listener for if changes occur in our FireStore db, then we change it accordingly here
-        usersCr.orderBy("order").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                habitList.clear();
-                for (DocumentSnapshot doc : value.getDocuments()) {
-                    habitList.add(doc.toObject(Habit.class));
-                }
-                habitArrayAdapter.notifyDataSetChanged();
-            }
-        });
+//        // listener for if changes occur in our FireStore db, then we change it accordingly here
+//        usersCr.orderBy("order").addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+//                if (error == null && value != null){
+//                    for (DocumentChange dc : value.getDocumentChanges()) {
+//                        Habit h = dc.getDocument().toObject(Habit.class);
+//                        if (h == null) { continue; }
+//                        if (dc.getType() == DocumentChange.Type.ADDED && !habitList.contains(h)) {
+//                            habitList.add(h);
+//                            habitRecyclerAdapter.notifyItemInserted(habitList.size()-1);
+//                        }
+//                        else if (dc.getType() == DocumentChange.Type.MODIFIED) {
+//                            int index = habitList.indexOf(h);
+//                            habitList.remove(index);
+//                            habitList.add(index, h);
+//                            habitRecyclerAdapter.notifyItemChanged(index);
+//                        }
+//                        else if (dc.getType() == DocumentChange.Type.REMOVED){
+//                            int index = habitList.indexOf(h);
+//                            habitList.remove(h);
+//                            habitRecyclerAdapter.notifyItemRemoved(index);
+//                        }
+//                    }
+//                }
+//                else {
+//                    Log.d(DBTAG, "Could not get the snapshot of db changes or value was Null");
+//                }
+//            }
+//        });
     }
 
     /**
@@ -288,7 +316,7 @@ public class HabitsFragmentActivity extends Fragment {
         // add the habit to our list
         habitList.add(habit);
         // render changes
-        habitArrayAdapter.notifyDataSetChanged();
+        habitRecyclerAdapter.notifyItemInserted(habitList.size()-1);
         // add habit to our database
         usersCr.document(habit.getTitle()).set(habit);
 
@@ -311,13 +339,14 @@ public class HabitsFragmentActivity extends Fragment {
         final DocumentReference userDr = db.collection("users").document(currentUser);
         final CollectionReference usersCr = userDr.collection("Habits");
         // get the habit that we are deleting
-        Habit h = habitArrayAdapter.getItem(index);
+//        Habit h = habitArrayAdapter.getItem(index);
+        Habit h = habitList.get(index);
+        // also delete from database
+        usersCr.document(h.getTitle()).delete();
         // remove it from the list
         habitList.remove(index);
         // render changes
-        habitArrayAdapter.notifyDataSetChanged();
-        // also delete from database
-        usersCr.document(h.getTitle()).delete();
+        habitRecyclerAdapter.notifyItemRemoved(index);
 
         Map<String, Object> docData = new HashMap<>();
         // update all further ordering for deletion
@@ -341,7 +370,8 @@ public class HabitsFragmentActivity extends Fragment {
         // insert habit into list
         habitList.add(index, habit);
         // render changes
-        habitArrayAdapter.notifyDataSetChanged();
+        habitRecyclerAdapter.notifyItemInserted(index);
+//        habitRecyclerAdapter.notifyDataSetChanged();
 
         Map<String, Object> docData = new HashMap<>();
         // update all further ordering for insertion
@@ -355,5 +385,14 @@ public class HabitsFragmentActivity extends Fragment {
         usersCr.document(habit.getTitle()).set(habit);
         docData.put("order", index);
         usersCr.document(habit.getTitle()).set(docData, SetOptions.merge());
+    }
+
+    @Override
+    public void onHabitClick(int position) {
+        Bundle editHabitBundle = new Bundle();
+        Habit h = habitList.get(position);
+        editHabitBundle.putParcelable("Habit", h);
+        editHabitBundle.putInt("index", position);
+        navController.navigate(R.id.action_habits_to_editHabitFragmentActivity, editHabitBundle);
     }
 }
