@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,16 @@ public class CommunityFragmentActivity extends Fragment {
         LinearLayoutManager layoutManager=new LinearLayoutManager(getContext());
         rvFollowing.setLayoutManager(layoutManager);
         ArrayList<User> userArrayList=new ArrayList<>();
-        userArrayAdapter= new UserArrayAdapter(getContext(), userArrayList);
+
+        // item click listener
+        UserArrayAdapter.ClickListener clickListener = new UserArrayAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int pos, User itemUser) {
+
+            }
+        };
+
+        userArrayAdapter= new UserArrayAdapter(getContext(), userArrayList, clickListener);
         rvFollowing.setAdapter(userArrayAdapter);
         User.getCurrentUser().getFollowing(new User.UserListDataListener() {
             @Override
