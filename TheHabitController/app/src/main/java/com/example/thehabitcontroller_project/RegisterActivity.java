@@ -36,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         ProgressBar pbReg = findViewById(R.id.pbReg);
 
         btnSignUp.setOnClickListener(view -> {
+            btnSignUp.setEnabled(false);
             // start loading spinner
             pbReg.setVisibility(View.VISIBLE);
 
@@ -52,6 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Please fill in all fields.",
                         Toast.LENGTH_SHORT).show();
                 pbReg.setVisibility(View.GONE);
+                btnSignUp.setEnabled(true);
             } else {
                 // backend registration process
                 User.Register(strEmail, strName, strPass, u -> {

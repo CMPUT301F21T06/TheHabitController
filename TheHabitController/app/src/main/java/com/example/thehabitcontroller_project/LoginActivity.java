@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         TextInputLayout tiEmail = findViewById(R.id.tiLoginEmail);
         TextInputLayout tiPass = findViewById(R.id.tiLoginPassword);
         btnLogin.setOnClickListener(view -> {
+            btnLogin.setEnabled(false);
             ProgressBar pb=findViewById(R.id.pbLogin);
             pb.setVisibility(View.VISIBLE);
             String strEmail,strPass;
@@ -46,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
             if (strEmail.isEmpty()||strPass.isEmpty()){
                 Toast.makeText(getBaseContext(), "Email and password cannot be empty.", Toast.LENGTH_SHORT).show();
                 pb.setVisibility(View.GONE);
+                btnLogin.setEnabled(true);
             } else {
                 User.login(strEmail, strPass, u -> {
                     Log.d(TAG,"Auth Complete");
