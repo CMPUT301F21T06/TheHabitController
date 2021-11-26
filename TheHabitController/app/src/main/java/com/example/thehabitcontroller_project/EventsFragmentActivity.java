@@ -48,6 +48,7 @@ public class EventsFragmentActivity extends Fragment {
     private FirebaseFirestore db;
     private String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
     final String DBTAG = "FireStore Call";
+    private Habit dailyHabit;
 
     public EventsFragmentActivity() {
         // Required empty public constructor
@@ -80,6 +81,7 @@ public class EventsFragmentActivity extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         FloatingActionButton fab = view.findViewById(R.id.eventFloatingActionButton);
         NavController navController = Navigation.findNavController(view);
         db = FirebaseFirestore.getInstance();
@@ -154,6 +156,13 @@ public class EventsFragmentActivity extends Fragment {
      * @param view the current {@link View} we are in
      */
     private void initializeEventList(View view) {
+        // get our daily habit
+        Bundle currBundle = getArguments();
+        if (currBundle != null) {
+            this.dailyHabit = currBundle.getParcelable("DailyHabit");
+            getActivity().setTitle("'" + dailyHabit.getTitle() + "'" + " Events");
+        }
+
         // initializes the Collection reference to the user's collection
         final DocumentReference userDr = db.collection("users").document(currentUser);
         final CollectionReference usersCr = userDr.collection("Events");

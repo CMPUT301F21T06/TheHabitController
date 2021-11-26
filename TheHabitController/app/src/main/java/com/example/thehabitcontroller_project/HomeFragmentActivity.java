@@ -85,8 +85,8 @@ public class HomeFragmentActivity extends Fragment {
                 // send over to AddHabitEventActivity to handle
                 Bundle habitBundle = new Bundle();
                 Habit h = dailyHabitArrayAdapter.getItem(i);
-                habitBundle.putParcelable("Habit", h);
-                navController.navigate(R.id.action_home2_to_addEventActivity, habitBundle);
+                habitBundle.putParcelable("DailyHabit", h);
+                navController.navigate(R.id.action_home2_to_events, habitBundle);
             }
         });
     }
