@@ -12,6 +12,14 @@
     <string name="habitPublicCheckBox">Is Public</string>
     <string name="saveHabitButtonName">Save</string>
     <string name="deleteHabitButtonName">Delete</string>
+    <string name="scheduleTitle">Schedule</string>
+    <string name="chipMonday">Mon</string>
+    <string name="chipTuesday">Tues</string>
+    <string name="chipWednesday">Wed</string>
+    <string name="chipThursday">Thur</string>
+    <string name="chipFriday">Fri</string>
+    <string name="chipSaturday">Sat</string>
+    <string name="chipSunday">Sun</string>
 
     <string name="addEventTitleHint">Add an Event Title</string>
     <string name="addEventCommentHint">Add a Comment (Max 20 characters)</string>
@@ -19,8 +27,7 @@
     <string name="eventStartDateButton">Event Date</string>
     <string name="addEventButtonName">Add</string>
     <string name="cancelAddEventButtonName">Cancel</string>
-    <string name="addEventLocationHint">Add a Location</string>
-    <string name="addEventPhotoHint">Add a Photo</string>
+    <string name="addEventLocationHint">Set Location</string>
+    <string name="addEventPhotoHint">Take Photo</string>
     <string name="HabitContentNameExample">Habit Name</string>
-
 </resources>

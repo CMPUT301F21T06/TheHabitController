@@ -3,8 +3,14 @@ package com.example.thehabitcontroller_project;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -19,13 +25,16 @@ public class Habit implements Parcelable, Comparable<Habit>{
     private String reason;
     private Date dateStart;
     private boolean isPublic;
+    private List<Boolean> schedule;
+    private int timesFinished;
+    private int totalShownTimes;
 
     public Habit() {
         // empty constructor
     }
 
     /**
-     * Initializes a Habit with all of its parameters
+     * Initializes a Habit with all of its parameters not including its schedule
      * @param title     The title of a Habit
      * @param reason    The reason for the Habit
      * @param dateStart The start date of the habit
@@ -36,6 +45,55 @@ public class Habit implements Parcelable, Comparable<Habit>{
         this.reason = reason;
         this.dateStart = dateStart;
         this.isPublic = isPublic;
+        this.schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
+        this.timesFinished = 0;
+        this.totalShownTimes = 1;
+    }
+
+    /**
+     * Initializes a Habit with all of its parameters including schedule
+     * @param title     The title of a Habit
+     * @param reason    The reason for the Habit
+     * @param dateStart The start date of the habit
+     * @param isPublic  If the habit is public; shared or not
+     * @param schedule  Which days of the week the habit is to occur
+     */
+    public Habit(String title, String reason, Date dateStart, boolean isPublic, List<Boolean> schedule) {
+        this.title = title;
+        this.reason = reason;
+        this.dateStart = dateStart;
+        this.isPublic = isPublic;
+        this.schedule = schedule;
+        this.timesFinished = 0;
+        this.totalShownTimes = 1;
+    }
+
+    /**
+     * Initializes a Habit with all of its parameters including schedule and times done stats
+     * @param title             The title of a Habit
+     * @param reason            The reason for the Habit
+     * @param dateStart         The start date of the habit
+     * @param isPublic          If the habit is public; shared or not
+     * @param schedule          Which days of the week the habit is to occur
+     * @param timesFinished     Number of times this habit has been completed
+     * @param totalShownTimes   Total number of times this habit had been shown
+     */
+    public Habit(
+            String title,
+            String reason,
+            Date dateStart,
+            boolean isPublic,
+            List<Boolean> schedule,
+            int timesFinished,
+            int totalShownTimes
+    ) {
+        this.title = title;
+        this.reason = reason;
+        this.dateStart = dateStart;
+        this.isPublic = isPublic;
+        this.schedule = schedule;
+        this.timesFinished = timesFinished;
+        this.totalShownTimes = totalShownTimes;
     }
 
     /**
@@ -48,6 +106,9 @@ public class Habit implements Parcelable, Comparable<Habit>{
         reason = in.readString();
         dateStart = new Date(in.readLong());
         isPublic = in.readBoolean();
+        schedule = in.readArrayList(Boolean.class.getClassLoader());
+        timesFinished = in.readInt();
+        totalShownTimes = in.readInt();
     }
 
     /**
@@ -174,7 +235,106 @@ public class Habit implements Parcelable, Comparable<Habit>{
      * @return the value that the Habits' titles compare to
      */
     @Override
-    public int compareTo(Habit habit) {
+    public int compareTo(@NonNull Habit habit) {
         return title.compareTo(habit.getTitle());
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return (this.getClass() != obj.getClass() || obj == null) ?
+                this.getTitle() == ((Habit) obj).getTitle() : false;
+    }
+
+    /**
+     * setter for the schedule; what days of week the habit is to occur
+     * @param schedule  a {@link Boolean} {@link List} denoting which days of the week (true) the habit is to occur
+     */
+    public void setSchedule(List<Boolean> schedule) {
+        this.schedule = schedule;
+    }
+
+    /**
+     * Getter for the schedule of the habit; what days of week the habit is to occur
+     * @return  a {@link Boolean} {@link List} containing the days of the week (as True) the habit is to occur
+     */
+    public List<Boolean> getSchedule() {
+        return schedule;
+    }
+
+    /**
+     * Getter for the number of times this habit has been done
+     * @return the number of times as an int
+     */
+    public int getTimesFinished() {
+        return timesFinished;
+    }
+
+    /**
+     * Getter for the name of the field "timesFinished" so we can increment it in the database
+     *
+     * @return {@link String} of the field name "timesFinished"
+     */
+    public String getTimesFinishedString() {
+        return "timesFinished";
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getTotalShownTimesString() { return "totalShownTimes"; }
+
+    /**
+     * Incrementer for the number of times this habit has been done
+     */
+    public void incrementTimesFinished() {
+        this.timesFinished++;
+    }
+
+    /**
+     * Incrementer method overload for the number of times this habit has been done
+     *
+     * @param num the number of times this habit has been done
+     */
+    public void incrementTimesFinished(int num) {
+        this.timesFinished += num;
+        if (this.timesFinished < 0) {
+            this.timesFinished = 0;
+        }
+    }
+
+    /**
+     * Setter for the number of times finished
+     * @param timesFinished the number of times this habit has been completed as an int
+     */
+    public void setTimesFinished(int timesFinished) {
+        this.timesFinished = timesFinished;
+    }
+
+    /**
+     * Getter for the total number of times this habit has been on the daily habits page
+     * @return the number of total times the habit has been shown to the user
+     */
+    public int getTotalShownTimes() {
+        return totalShownTimes;
+    }
+
+    /**
+     * Setter for the total times the habit has been shown on the daily habits page
+     * @param totalShownTimes the total times as int
+     */
+    public void setTotalShownTimes(int totalShownTimes) {
+        this.totalShownTimes = totalShownTimes;
+    }
+
+    /**
+     * Returns the percentage in int that this habit was completed
+     * @return the percentage as a whole number
+     */
+    public int getPercentageCompleted() {
+        int num = this.timesFinished < 0 ? 0 : this.timesFinished;
+        int deNom = this.totalShownTimes <= 0 ? 1 : this.totalShownTimes;
+        int total = (int)((double)num/(double)deNom * 100);
+        return total > 100 ? 100 : total;
     }
 }

@@ -21,11 +21,17 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * A {@link Fragment} subclass to allow adding of {@link Habit} objects
@@ -43,6 +49,7 @@ public class AddHabitFragmentActivity extends Fragment{
     private Button addButton;
     private Button cancelButton;
     private CheckBox isPublicCheckBox;
+    private ChipGroup scheduleChipGroup;
 
     public AddHabitFragmentActivity() {
         // Required empty public constructor
@@ -74,6 +81,7 @@ public class AddHabitFragmentActivity extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Add A New Habit");
 
         // initialize all UI references to be used later
         addButton = view.findViewById(R.id.addHabitButton);
@@ -83,6 +91,7 @@ public class AddHabitFragmentActivity extends Fragment{
         date = view.findViewById(R.id.date_editText);
         setDateButton = view.findViewById(R.id.btPickDate);
         isPublicCheckBox = view.findViewById(R.id.habitPublicCheckBox);
+        scheduleChipGroup = view.findViewById(R.id.weekly_chip_group);
 
         // set the onclicklistener for our set date button to pick a date
         setDateButton.setOnClickListener(new View.OnClickListener() {
@@ -124,13 +133,23 @@ public class AddHabitFragmentActivity extends Fragment{
                 }
                 // get the other info user put in
                 String habitTitle = title.getText().toString();
+                // if no habit is entered, return
+                if (habitTitle.length() == 0) {
+                    getActivity().onBackPressed();
+                    return;
+                }
                 String habitReason = reason.getText().toString();
                 boolean isPublic = isPublicCheckBox.isChecked();
+                List<Boolean> schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
+                for (int i = 0; i < scheduleChipGroup.getChildCount(); i++) {
+                    Chip chip = (Chip) scheduleChipGroup.getChildAt(i);
+                    schedule.set(i, chip.isChecked());
+                }
 
                 // add the new habit to the bundle
                 addHabitBundle.putParcelable(
                     "addHabit",
-                    new Habit(habitTitle, habitReason, inputDate, isPublic)
+                    new Habit(habitTitle, habitReason, inputDate, isPublic, schedule)
                 );
 
                 // navigate to the habit list view

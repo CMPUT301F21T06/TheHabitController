@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical">
@@ -19,7 +20,8 @@
         android:ems="10"
         android:hint="@string/addHabitReasonHint"
         android:inputType="text"
-        android:maxLength="30"/>
+        android:maxLength="30"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,9 +43,16 @@
             android:layout_weight="2" />
     </LinearLayout>
 
+    <include
+        layout="@layout/weekly_schedule_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <CheckBox
         android:id="@+id/habitPublicCheckBox"
         android:layout_width="165dp"
         android:layout_height="wrap_content"
         android:text="@string/habitPublicCheckBox" />
+
+
 </LinearLayout>

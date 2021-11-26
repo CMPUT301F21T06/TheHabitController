@@ -65,11 +65,20 @@
             android:name="addEvent"
             app:argType="com.example.thehabitcontroller_project.Event"/>
         <argument
+            android:name="editedEvent"
+            app:argType="com.example.thehabitcontroller_project.Event"/>
+        <argument
+            android:name="deleteIndex"
+            android:defaultValue="-1"/>
+        <argument
             android:name="index"
             android:defaultValue="-1"/>
         <action
             android:id="@+id/action_events_to_addEventActivity"
             app:destination="@id/addEventActivity" />
+        <action
+            android:id="@+id/action_events_to_editEventFragmentActivity"
+            app:destination="@id/editEventFragmentActivity" />
     <fragment
         android:id="@+id/addHabitActivity"
         android:name="com.example.thehabitcontroller_project.AddHabitFragmentActivity"
@@ -101,6 +110,21 @@
         <action
             android:id="@+id/action_editHabitFragmentActivity_to_habits"
             app:destination="@id/habits" />
+    </fragment>
+    <fragment
+        android:id="@+id/editEventFragmentActivity"
+        android:name="com.example.thehabitcontroller_project.EditEventFragmentActivity"
+        android:label="fragment_edit_event_activity"
+        tools:layout="@layout/fragment_edit_event_activity" >
+        <argument
+            android:name="Event"
+            app:argType="com.example.thehabitcontroller_project.Event"/>
+        <argument
+            android:name="index"
+            android:defaultValue="-1"/>
+        <action
+            android:id="@+id/action_editEventFragmentActivity_to_events"
+            app:destination="@id/events" />
     </fragment>
     <fragment
         android:id="@+id/viewUserHabitFragment"

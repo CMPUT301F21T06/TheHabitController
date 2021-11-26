@@ -20,7 +20,7 @@ import java.util.List;
  * @author Tyler
  * @version 1.0.0
  */
-public class eventArrayAdapter extends ArrayAdapter<Event> {
+public class EventArrayAdapter extends ArrayAdapter<Event> {
     private List<Event> eventList;
     private Context context;
 
@@ -29,7 +29,7 @@ public class eventArrayAdapter extends ArrayAdapter<Event> {
      * @param context   The context of the fragment it came from as {@link Context}
      * @param eventList the {@link List} of {@link Event} objects
      */
-    public eventArrayAdapter(@NonNull Context context, @NonNull List<Event> eventList) {
+    public EventArrayAdapter(@NonNull Context context, @NonNull List<Event> eventList) {
         super(context, 0, eventList);
         this.eventList = eventList;
         this.context = context;
@@ -48,7 +48,9 @@ public class eventArrayAdapter extends ArrayAdapter<Event> {
         }
         // shows the title on the layout
         TextView eventTitle = view.findViewById(R.id.event_name);
-        eventTitle.setText(eventList.get(position).getTitle());
+        Event e = eventList.get(position);
+        eventTitle.setText(e.getTitle());
+
         return view;
     }
 }

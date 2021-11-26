@@ -1,14 +1,17 @@
 package com.example.thehabitcontroller_project;
 
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.graphics.Bitmap;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 /**
  * The Event class for storing info for events.
@@ -23,7 +26,9 @@ public class Event implements Parcelable {
     private Date dateEvent;
     private String location; // temporary until implemented
 //    private Location location;
-    private String bitmapString;
+    private Bitmap photo;
+    private String photoString;
+    public static final int MAX_PHOTO_SIZE = 1000000; // 1MB
 
     public Event() {
         // empty constructor
@@ -35,14 +40,14 @@ public class Event implements Parcelable {
      * @param comment      Comment for the event
      * @param dateEvent    Date of the event
      * @param location     Location the event occurred
-     * @param bitmapString Photo of the event
+     * @param photoString  Photo of the event
      */
-    public Event(String title, String comment, Date dateEvent, String location, String bitmapString) {
+    public Event(String title, String comment, Date dateEvent, String location, String photoString) {
         this.title = title;
         this.comment = comment;
         this.dateEvent = dateEvent;
         this.location = location; // will change back to type Location
-        this.bitmapString = bitmapString;
+        this.photoString = photoString;
     }
 
     /**
@@ -62,7 +67,7 @@ public class Event implements Parcelable {
 //        location = new Location("Home");
 //        location.setLongitude(0);
 //        location.setLatitude(0);
-        bitmapString = "bitmapString"; // temporary until implemented
+        photoString = in.readString();
     }
 
     /**
@@ -147,18 +152,52 @@ public class Event implements Parcelable {
 
     /**
      * The getter for the Event's photo
-     * @return The Event's photo as a bitmap {@link String} object
+     * @return The Event's photo as a bitmap {@link Bitmap} object
      */
-    public String getBitmapString() {
-        return bitmapString;
+    public Bitmap getPhoto() {
+        if (this.photoString != null) {
+            byte [] decodedBytes = Base64.decode(this.photoString, 0);
+            this.photo = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        }
+        return photo;
     }
 
     /**
      * The setter for the Event's photo
-     * @param bitmapString The Event's photo as a bitmap {@link String} object
+     * @param photo The Event's photo as a bitmap {@link Bitmap} object
      */
-    public void setBitmapString(String bitmapString) {
-        this.bitmapString=bitmapString;
+    public void setPhoto(Bitmap photo) {
+        if (photo != null) {
+
+            while (photo.getByteCount() > MAX_PHOTO_SIZE) {
+                double scaleFactor = 0.9;
+                photo = Bitmap.createScaledBitmap(photo, (int) (photo.getWidth() * scaleFactor), (int) (photo.getHeight() * scaleFactor), true);
+            }
+
+            this.photo = photo;
+            ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
+            this.photoString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+        }
+        else {
+            this.photoString = null;
+        }
+    }
+
+    /**
+     * The getter for the Event's photo string
+     * @return The Event's photo as a string {@link String} object
+     */
+    public String getPhotoString() {
+        return photoString;
+    }
+
+    /**
+     * The setter for the Event's photo string
+     * @param photoString The Event's photo as a string {@link String} object
+     */
+    public void setPhotoString(String photoString) {
+        this.photoString = photoString;
     }
 
     /**
@@ -184,7 +223,7 @@ public class Event implements Parcelable {
         parcel.writeLong(dateEvent.getTime());
         parcel.writeString(location); // temporary until implemented
 //        location.writeToParcel(parcel, i);
-        parcel.writeString(bitmapString);
+        parcel.writeValue(photoString);
     }
 
     /**

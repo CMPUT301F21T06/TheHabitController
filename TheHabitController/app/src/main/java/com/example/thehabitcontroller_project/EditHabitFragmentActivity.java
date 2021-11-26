@@ -16,11 +16,17 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * A {@link Fragment} subclass to allow editing of {@link Habit}s of the user
@@ -38,6 +44,8 @@ public class EditHabitFragmentActivity extends Fragment {
     private Button saveButton;
     private Button cancelButton;
     private Button deleteButton;
+    private ChipGroup scheduleChipGroup;
+    private Habit selectedHabit;
 
 
     public EditHabitFragmentActivity() {
@@ -81,16 +89,26 @@ public class EditHabitFragmentActivity extends Fragment {
         reason = view.findViewById(R.id.habit_reason);
         date = view.findViewById(R.id.date_editText);
         setDateButton = view.findViewById(R.id.btPickDate);
+        // can't change date after Habit is created
+        setDateButton.setVisibility(View.INVISIBLE);
         isPublicCheckBox = view.findViewById(R.id.habitPublicCheckBox);
+        scheduleChipGroup = view.findViewById(R.id.weekly_chip_group);
 
         // get the bundle from the habit fragment activity that has the selected habit info
         Bundle currHabitBundle = getArguments();
-        Habit selectedHabit = currHabitBundle.getParcelable("Habit");
+        selectedHabit = currHabitBundle.getParcelable("Habit");
+        // set the title specific to the Habit
+        getActivity().setTitle("'" + selectedHabit.getTitle() + "' Habit");
         // set the current page with that info
         title.setText(selectedHabit.getTitle());
         reason.setText(selectedHabit.getReason());
         date.setText(selectedHabit.getFormattedDate());
         isPublicCheckBox.setChecked(selectedHabit.isPublic());
+        List<Boolean> selectedHabitSchedule = selectedHabit.getSchedule();
+        for (int i = 0; i < scheduleChipGroup.getChildCount() && i < selectedHabitSchedule.size(); i++) {
+            Chip chip = (Chip) scheduleChipGroup.getChildAt(i);
+            chip.setChecked(selectedHabitSchedule.get(i));
+        }
 
         // set the onclicklistener for our set date button to pick a date
         setDateButton.setOnClickListener(new View.OnClickListener() {
@@ -140,11 +158,27 @@ public class EditHabitFragmentActivity extends Fragment {
                 }
                 // get the edited habit's info
                 String habitTitle = title.getText().toString();
+                // if no habit title is entered, return
+                if (habitTitle.length() == 0) {
+                    getActivity().onBackPressed();
+                    return;
+                }
                 String habitReason = reason.getText().toString();
                 boolean isPublic = isPublicCheckBox.isChecked();
-
+                // setup the habit's weekly schedule
+                List<Boolean> schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
+                for (int i = 0; i < scheduleChipGroup.getChildCount(); i++) {
+                    Chip chip = (Chip) scheduleChipGroup.getChildAt(i);
+                    schedule.set(i, chip.isChecked());
+                }
+                // get the habit's stats of completion
+                int timesDone = selectedHabit.getTimesFinished();
+                int totalTimesShown = selectedHabit.getTotalShownTimes();
                 // put the new habit in the bundle and the index of the habit from the original list
-                editHabitBundle.putParcelable("editedHabit", new Habit(habitTitle, habitReason, inputDate, isPublic));
+                editHabitBundle.putParcelable(
+                        "editedHabit",
+                        new Habit(habitTitle, habitReason, inputDate, isPublic, schedule, timesDone, totalTimesShown)
+                );
                 editHabitBundle.putInt("index", currHabitBundle.getInt("index"));
 
                 // navigate to the habit fragment activity
