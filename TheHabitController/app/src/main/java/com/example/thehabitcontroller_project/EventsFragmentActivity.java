@@ -97,7 +97,9 @@ public class EventsFragmentActivity extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navController.navigate(R.id.action_events_to_addEventActivity);
+                Bundle addEventBundle = new Bundle();
+                addEventBundle.putParcelable("DailyHabit", dailyHabit);
+                navController.navigate(R.id.action_events_to_addEventActivity, addEventBundle);
             }
         });
 

@@ -174,6 +174,7 @@ public class AddEventFragmentActivity extends Fragment{
 
                 // add the new event to the bundle
                 addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, photoString));
+                addEventBundle.putParcelable("DailyHabit", habit);
 
                 // navigate to the event list view
                 Navigation.findNavController(view).navigate(
@@ -207,9 +208,9 @@ public class AddEventFragmentActivity extends Fragment{
 
     private void getHabitBundle(View view) {
         Bundle currBundle = getArguments();
-        if (!currBundle.isEmpty()) {
+        if (currBundle != null) {
             // see if we've added a Habit
-            Habit currHabit = currBundle.getParcelable("Habit");
+            Habit currHabit = currBundle.getParcelable("DailyHabit");
             if (currHabit != null) {
                 this.habit = currHabit;
             }
