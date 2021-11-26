@@ -58,6 +58,7 @@ public class CommunityFragmentActivity extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Community");
         RecyclerView rvFollowing = view.findViewById(R.id.rvFollowing);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getContext());
         rvFollowing.setLayoutManager(layoutManager);
