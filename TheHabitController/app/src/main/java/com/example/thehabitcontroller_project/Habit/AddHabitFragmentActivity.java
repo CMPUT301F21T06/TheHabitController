@@ -137,6 +137,8 @@ public class AddHabitFragmentActivity extends Fragment{
                 }
                 String habitReason = reason.getText().toString();
                 boolean isPublic = isPublicCheckBox.isChecked();
+
+                // get the schedule by counting the chips that were selected
                 List<Boolean> schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
                 for (int i = 0; i < scheduleChipGroup.getChildCount(); i++) {
                     Chip chip = (Chip) scheduleChipGroup.getChildAt(i);
