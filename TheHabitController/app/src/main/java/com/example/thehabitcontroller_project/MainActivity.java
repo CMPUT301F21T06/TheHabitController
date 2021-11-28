@@ -3,6 +3,7 @@ package com.example.thehabitcontroller_project;
 import static androidx.navigation.Navigation.findNavController;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.TaskStackBuilder;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -45,20 +46,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpNavigation();
-        // register firebase authentication listener for login/logout operations
-//        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                if (firebaseAuth.getCurrentUser()!=null){
-//                    Log.d("SignIn","AuthStateChanged");
-//                } else {
-//                    signIn();
-//                }
-//            }
-//        });
-//        if (User.getCurrentUser()==null){
-//            signIn();
-//        }
     }
 
     @Override
@@ -73,12 +60,6 @@ public class MainActivity extends AppCompatActivity {
      * Build and launch login intent
      */
     public void signIn() {
-//        Intent loginIntent = AuthUI.getInstance()
-//                .createSignInIntentBuilder()
-//                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build()))
-//                .setIsSmartLockEnabled(false)
-//                .build();
-//        signInLauncher.launch(loginIntent);
         Log.d("LoginDetect","Start Login Activity");
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
@@ -95,7 +76,34 @@ public class MainActivity extends AppCompatActivity {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView2);
         navController = navHostFragment.getNavController();
         //For changing title
-        //AppBarConfiguration appBarConfiguration = new AppBarConfiguration(R.id.home, R.id.events,R.id.habits,R.id.community).build();
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+    }
+
+    /**
+     * This method is called whenever the user chooses to navigate Up within your application's
+     * activity hierarchy from the action bar.
+     *
+     * <p>If a parent was specified in the manifest for this activity or an activity-alias to it,
+     * default Up navigation will be handled automatically. See
+     * {@link #getSupportParentActivityIntent()} for how to specify the parent. If any activity
+     * along the parent chain requires extra Intent arguments, the Activity subclass
+     * should override the method {@link #onPrepareSupportNavigateUpTaskStack(TaskStackBuilder)}
+     * to supply those arguments.</p>
+     *
+     * <p>See <a href="{@docRoot}guide/topics/fundamentals/tasks-and-back-stack.html">Tasks and
+     * Back Stack</a> from the developer guide and
+     * <a href="{@docRoot}design/patterns/navigation.html">Navigation</a> from the design guide
+     * for more information about navigating within your app.</p>
+     *
+     * <p>See the {@link TaskStackBuilder} class and the Activity methods
+     * {@link #getSupportParentActivityIntent()}, {@link #supportShouldUpRecreateTask(Intent)}, and
+     * {@link #supportNavigateUpTo(Intent)} for help implementing custom Up navigation.</p>
+     *
+     * @return true if Up navigation completed successfully and this Activity was finished,
+     * false otherwise.
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        return navController.navigateUp();
     }
 }
