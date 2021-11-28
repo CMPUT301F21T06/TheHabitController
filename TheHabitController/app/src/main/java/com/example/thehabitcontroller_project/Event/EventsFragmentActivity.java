@@ -177,7 +177,9 @@ public class EventsFragmentActivity extends Fragment {
                 // start with an empty list then add all events to the list
                 eventList.clear();
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                    eventList.add(doc.toObject(Event.class));
+                    if (doc.getString("habitTitle").equals(dailyHabit.getTitle())) {
+                        eventList.add(doc.toObject(Event.class));
+                    }
                 }
                 eventArrayAdapter.notifyDataSetChanged();
                 checkEventListChanges();
@@ -196,7 +198,9 @@ public class EventsFragmentActivity extends Fragment {
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 eventList.clear();
                 for (DocumentSnapshot doc : value.getDocuments()) {
-                    eventList.add(doc.toObject(Event.class));
+                    if (doc.getString("habitTitle").equals(dailyHabit.getTitle())) {
+                        eventList.add(doc.toObject(Event.class));
+                    }
                 }
                 eventArrayAdapter.notifyDataSetChanged();
             }
