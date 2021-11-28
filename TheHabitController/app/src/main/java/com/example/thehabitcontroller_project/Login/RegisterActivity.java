@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.thehabitcontroller_project.Community.User;
+import com.example.thehabitcontroller_project.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
