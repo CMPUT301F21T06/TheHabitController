@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Habit;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +19,7 @@ import java.util.Locale;
  * This will store the title, reason, date start, and public status of a Habit
  *
  * @author Steven
- * @version 1.0.0
+ * @version 1.1.0
  */
 public class Habit implements Parcelable, Comparable<Habit>{
     private String title;
@@ -35,6 +36,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Initializes a Habit with all of its parameters not including its schedule
+     *
      * @param title     The title of a Habit
      * @param reason    The reason for the Habit
      * @param dateStart The start date of the habit
@@ -46,12 +48,14 @@ public class Habit implements Parcelable, Comparable<Habit>{
         this.dateStart = dateStart;
         this.isPublic = isPublic;
         this.schedule = new ArrayList<Boolean>(Arrays.asList(new Boolean[7]));
+        Collections.fill(this.schedule, Boolean.FALSE);
         this.timesFinished = 0;
         this.totalShownTimes = 1;
     }
 
     /**
      * Initializes a Habit with all of its parameters including schedule
+     *
      * @param title     The title of a Habit
      * @param reason    The reason for the Habit
      * @param dateStart The start date of the habit
@@ -70,6 +74,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Initializes a Habit with all of its parameters including schedule and times done stats
+     *
      * @param title             The title of a Habit
      * @param reason            The reason for the Habit
      * @param dateStart         The start date of the habit
@@ -99,6 +104,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
     /**
      * Part of implementing {@link Parcelable}, we need a way
      * to instantiate a Habit using a Parcel so we can send it in a {@link android.os.Bundle}
+     *
      * @param in The Parcel object containing Habit information
      */
     protected Habit(Parcel in) {
@@ -129,6 +135,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Getter for the Habit's title
+     *
      * @return Returns a {@link String} containing the habit's Title
      */
     public String getTitle() {
@@ -137,6 +144,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Setter for the Habit's title
+     *
      * @param title The title of the Habit as {@link String}
      */
     public void setTitle(String title) {
@@ -145,6 +153,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Getter for the Habit's reason
+     *
      * @return The Habit's reason as a {@link String}
      */
     public String getReason() {
@@ -153,6 +162,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Setter for the Habit's reason
+     *
      * @param reason The Habit's reason as a {@link String}
      */
     public void setReason(String reason) {
@@ -161,6 +171,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Getter for the Habit's starting date
+     *
      * @return The full date for when the Habit is to start as a {@link Date} object
      */
     public Date getDateStart() {
@@ -169,6 +180,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * The setter for the Habit's starting date
+     *
      * @param dateStart The Habit's starting date as a {@link Date} object
      */
     public void setDateStart(Date dateStart) {
@@ -177,6 +189,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Getter for the Habit's public status
+     *
      * @return {@literal boolean} True if Habit is set to public, False otherwise
      */
     public boolean isPublic() {
@@ -189,6 +202,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
      * Uses the formatting pattern 'EEEE, MMMM dd, yyyy' which shows the
      * Name of the day in the week, followed by the shortened Month, and then
      * the day of the month as a 2 digit number, and the year.
+     *
      * @return {@link String} of the formatted date using the {@link SimpleDateFormat} pattern of 'EEEE, MMMM dd, yyyy'
      */
     public String getFormattedDate() {
@@ -198,6 +212,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Setter for the Habit's public setting
+     *
      * @param aPublic {@lteral boolean} True or False for if the Habit is to be public or not
      */
     public void setPublic(boolean aPublic) {
@@ -207,6 +222,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
     /**
      * Part of the implementation of {@link Parcelable}, but was left as is.
      * No modifications were done to this override other than implementing it here.
+     *
      * @return {@literal int} 0
      */
     @Override
@@ -217,6 +233,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
     /**
      * Part of the implementation of {@link Parcelable} and writes all Habit attributes
      * to a {@link Parcel}
+     *
      * @param parcel the {@link Parcel} that the Habit writes to, "transforming" it into one.
      * @param i the {@link int} variable for implementing this Override; was not used here.
      */
@@ -231,6 +248,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
     /**
      * Part of the implementation of {@link Comparable} so that using {@link java.util.ArrayList}
      * or other Java data structures could find and delete the object, as well as sorting if needed.
+     *
      * @param habit the Habit to compare to
      * @return the value that the Habits' titles compare to
      */
@@ -239,6 +257,10 @@ public class Habit implements Parcelable, Comparable<Habit>{
         return title.compareTo(habit.getTitle());
     }
 
+    /**
+     * Override so we can grab our {@link Habit} object out of a {@link List} by
+     * referencing the Habit class itself
+     */
     @Override
     public boolean equals(@Nullable Object obj) {
         return (this.getClass() != obj.getClass() || obj == null) ?
@@ -247,6 +269,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * setter for the schedule; what days of week the habit is to occur
+     *
      * @param schedule  a {@link Boolean} {@link List} denoting which days of the week (true) the habit is to occur
      */
     public void setSchedule(List<Boolean> schedule) {
@@ -255,6 +278,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Getter for the schedule of the habit; what days of week the habit is to occur
+     *
      * @return  a {@link Boolean} {@link List} containing the days of the week (as True) the habit is to occur
      */
     public List<Boolean> getSchedule() {
@@ -263,6 +287,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Getter for the number of times this habit has been done
+     *
      * @return the number of times as an int
      */
     public int getTimesFinished() {
@@ -279,8 +304,9 @@ public class Habit implements Parcelable, Comparable<Habit>{
     }
 
     /**
+     * For getting the attribute name "totalTimesShown" so we can update the database
      *
-     * @return
+     * @return the {@link String} "totalShownTimes"
      */
     public String getTotalShownTimesString() { return "totalShownTimes"; }
 
@@ -305,6 +331,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Setter for the number of times finished
+     *
      * @param timesFinished the number of times this habit has been completed as an int
      */
     public void setTimesFinished(int timesFinished) {
@@ -313,6 +340,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Getter for the total number of times this habit has been on the daily habits page
+     *
      * @return the number of total times the habit has been shown to the user
      */
     public int getTotalShownTimes() {
@@ -321,6 +349,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Setter for the total times the habit has been shown on the daily habits page
+     *
      * @param totalShownTimes the total times as int
      */
     public void setTotalShownTimes(int totalShownTimes) {
@@ -329,6 +358,7 @@ public class Habit implements Parcelable, Comparable<Habit>{
 
     /**
      * Returns the percentage in int that this habit was completed
+     *
      * @return the percentage as a whole number
      */
     public int getPercentageCompleted() {

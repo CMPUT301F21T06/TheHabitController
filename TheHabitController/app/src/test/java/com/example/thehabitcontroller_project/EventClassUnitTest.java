@@ -3,13 +3,10 @@ package com.example.thehabitcontroller_project;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import android.graphics.Bitmap;
-import android.location.Location;
+import com.example.thehabitcontroller_project.Event.Event;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**

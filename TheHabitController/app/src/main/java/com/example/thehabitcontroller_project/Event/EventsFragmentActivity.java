@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Event;
 
 import android.os.Bundle;
 
@@ -16,6 +16,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.thehabitcontroller_project.Habit.Habit;
+import com.example.thehabitcontroller_project.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -162,7 +164,12 @@ public class EventsFragmentActivity extends Fragment {
         Bundle currBundle = getArguments();
         if (currBundle != null) {
             this.dailyHabit = currBundle.getParcelable("DailyHabit");
-            getActivity().setTitle("'" + dailyHabit.getTitle() + "'" + " Events");
+            if (this.dailyHabit != null) {
+                getActivity().setTitle("'" + dailyHabit.getTitle() + "'" + " Events");
+            }
+            else {
+                getActivity().setTitle("Events");
+            }
         }
 
         // initializes the Collection reference to the user's collection

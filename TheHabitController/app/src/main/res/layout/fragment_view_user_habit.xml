@@ -4,7 +4,7 @@
     android:id="@+id/clViewUserHabit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewUserHabitFragment" >
+    tools:context=".Community.ViewUserHabitFragment" >
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvViewUserHabit"

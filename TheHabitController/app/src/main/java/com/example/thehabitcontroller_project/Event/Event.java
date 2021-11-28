@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Event;
 
 import android.graphics.BitmapFactory;
 import android.location.Location;
