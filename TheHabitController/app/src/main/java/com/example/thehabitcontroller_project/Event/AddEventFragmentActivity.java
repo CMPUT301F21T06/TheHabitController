@@ -1,8 +1,6 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Event;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -13,11 +11,8 @@ import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +23,9 @@ import android.widget.TextView;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
+
+import com.example.thehabitcontroller_project.Habit.Habit;
+import com.example.thehabitcontroller_project.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -39,7 +37,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import android.content.pm.PackageManager;
 
 /**
  * A {@link Fragment} subclass to allow adding of {@link Event} objects to the event list
@@ -111,7 +108,7 @@ public class AddEventFragmentActivity extends Fragment{
             @Override
             public void onClick(View v) {
                 // initialize our DatePicker UI
-                com.example.thehabitcontroller_project.DatePicker date = new com.example.thehabitcontroller_project.DatePicker();
+                com.example.thehabitcontroller_project.Helper.DatePicker date = new com.example.thehabitcontroller_project.Helper.DatePicker();
 
                 // Set Up Current Date Into dialog
                 Calendar calender = Calendar.getInstance();

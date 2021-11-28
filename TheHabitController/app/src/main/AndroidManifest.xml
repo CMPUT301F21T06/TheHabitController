@@ -10,16 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TheHabitController_Project">
         <activity
-            android:name=".UserSearchActivity"
+            android:name=".Community.UserSearchActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".Login.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".Login.LoginActivity"
             android:exported="true" />
         <activity
-            android:name=".UserProfileActivity"
+            android:name=".Community.UserProfileActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
