@@ -5,7 +5,7 @@
     android:id="@+id/clCommunity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CommunityFragmentActivity">
+    tools:context=".Community.CommunityFragmentActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabSearch"

@@ -1,23 +1,22 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Event;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,18 +27,22 @@ import android.widget.TextView;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
+
+import com.example.thehabitcontroller_project.Habit.Habit;
+import com.example.thehabitcontroller_project.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import android.content.pm.PackageManager;
 
 /**
  * A {@link Fragment} subclass to allow adding of {@link Event} objects to the event list
@@ -61,7 +64,9 @@ public class AddEventFragmentActivity extends Fragment{
     private ImageView eventPhotoView;
     private Habit habit;
 
-    private static final int requestCode = 1;
+    static final int REQUEST_TAKE_PHOTO = 1;
+    private String currentPhotoPath;
+    private String habitTitle;
 
     public AddEventFragmentActivity() {
         // Required empty public constructor
@@ -111,7 +116,7 @@ public class AddEventFragmentActivity extends Fragment{
             @Override
             public void onClick(View v) {
                 // initialize our DatePicker UI
-                com.example.thehabitcontroller_project.DatePicker date = new com.example.thehabitcontroller_project.DatePicker();
+                com.example.thehabitcontroller_project.Helper.DatePicker date = new com.example.thehabitcontroller_project.Helper.DatePicker();
 
                 // Set Up Current Date Into dialog
                 Calendar calender = Calendar.getInstance();
@@ -151,8 +156,8 @@ public class AddEventFragmentActivity extends Fragment{
                 if (eventPhotoView.getDrawable() != null) {
                     photo = ((BitmapDrawable) eventPhotoView.getDrawable()).getBitmap();
 
-                    ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
-                    photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
+//                    ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+//                    photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
 //                    photoString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
                 }
 
@@ -170,10 +175,11 @@ public class AddEventFragmentActivity extends Fragment{
                 // set the habit's completed value by 1
                 usersCr.document(habit.getTitle()).update(habit.getTimesFinishedString(), FieldValue.increment(1));
 
-                // TODO: attach habit to the event
+                // attach habit to the event
+                habitTitle = habit.getTitle();
 
                 // add the new event to the bundle
-                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, photoString));
+                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, photoString, habitTitle));
                 addEventBundle.putParcelable("DailyHabit", habit);
 
                 // navigate to the event list view
@@ -198,10 +204,7 @@ public class AddEventFragmentActivity extends Fragment{
             public void onClick(View v)
             {
                 // Create the intent and open the camera
-                Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                if (photoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(photoIntent, requestCode);
-//                }
+                takePicture();
             }
         });
     }
@@ -214,9 +217,6 @@ public class AddEventFragmentActivity extends Fragment{
             if (currHabit != null) {
                 this.habit = currHabit;
             }
-
-            // TODO: Add functionality to this so habit is attached to event
-
             // clear args so we refresh for next commands
             getArguments().clear();
         }
@@ -234,20 +234,77 @@ public class AddEventFragmentActivity extends Fragment{
         }
     };
 
-    // method stores and displays the photo
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile("temp",".jpg",storageDir);
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+
+        // Create file
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(currentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        getActivity().sendBroadcast(mediaScanIntent);
+
+        return image;
+    }
+
+    private void takePicture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+//        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+//        }
+    }
+
+    private void showPhoto() {
+        // Get the dimensions of the View
+        int targetW = eventPhotoView.getWidth();
+        int targetH = eventPhotoView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+        eventPhotoView.setImageBitmap(bitmap);
+    }
+
+    // Displays the photo
     public void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
 
-        // Match the pic id with requestCode
-        if (reqCode == requestCode) {
-
-            Bundle extras = data.getExtras();
-            // BitMap stores the image
-            Bitmap photoBitmap = (Bitmap) extras.get("data");
-
-            // Display the image
-            eventPhotoView.setImageBitmap(photoBitmap);
-            eventPhotoView.setVisibility(View.VISIBLE);
+        if (reqCode == REQUEST_TAKE_PHOTO) {
+            showPhoto();
         }
     }
+
 }

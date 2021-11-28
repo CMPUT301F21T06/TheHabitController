@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Event;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
+import com.example.thehabitcontroller_project.R;
+
 import java.util.List;
 
 /**

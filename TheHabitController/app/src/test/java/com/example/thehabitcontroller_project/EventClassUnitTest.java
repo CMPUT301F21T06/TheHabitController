@@ -3,13 +3,10 @@ package com.example.thehabitcontroller_project;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import android.graphics.Bitmap;
-import android.location.Location;
+import com.example.thehabitcontroller_project.Event.Event;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**
@@ -31,7 +28,7 @@ public class EventClassUnitTest {
 //        l.setLongitude(0);
 //        l.setLatitude(0);
 //        Bitmap b = Bitmap.createBitmap(100,100,Bitmap.Config.ARGB_8888);
-        Event e = new Event("Slept early", c, d, l, "photoString");
+        Event e = new Event("Slept early", c, d, l, "photoString", "Sleep early");
 
         // make sure they are the same
         assertEquals(e.getTitle(),"Slept early");
@@ -40,6 +37,7 @@ public class EventClassUnitTest {
         assertEquals(e.getDateEvent(), d);
         assertEquals(e.getLocation(), l);
         assertEquals(e.getPhotoString(), "photoString");
+        assertEquals(e.getHabitTitle(),"Sleep early");
     }
 
     /**
@@ -49,7 +47,7 @@ public class EventClassUnitTest {
     public void TestFormattedDate() {
 //        Bitmap b = Bitmap.createBitmap(100,100,Bitmap.Config.ARGB_8888);
         // initialize our event
-        Event e = new Event("Slept early", "Before midnight", new Date(), "location", "photoString");
+        Event e = new Event("Slept early", "Before midnight", new Date(), "location", "photoString","Sleep early");
 
         // get the proper date format we want
         SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.US);
@@ -57,5 +55,6 @@ public class EventClassUnitTest {
 
         // make sure its the same as the Habit class provides
         assertEquals(e.getFormattedDate(), formattedDate);
+        assertEquals(e.getHabitTitle(),"Sleep early");
     }
 }

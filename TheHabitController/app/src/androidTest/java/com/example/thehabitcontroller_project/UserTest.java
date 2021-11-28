@@ -6,12 +6,13 @@ import static org.junit.Assert.fail;
 
 import android.util.Log;
 
+import com.example.thehabitcontroller_project.Community.User;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class UserTest {
     @Test

@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Community;
 
 import android.os.Bundle;
 
@@ -28,6 +28,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import com.example.thehabitcontroller_project.Habit.Habit;
+import com.example.thehabitcontroller_project.R;
+
 import java.util.List;
 
 /**

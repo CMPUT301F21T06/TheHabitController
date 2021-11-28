@@ -1,13 +1,10 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.text.HtmlCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.thehabitcontroller_project.Community.User;
+import com.example.thehabitcontroller_project.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;

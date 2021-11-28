@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Habit;
 
 import android.os.Bundle;
 
@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.thehabitcontroller_project.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -99,11 +100,13 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         habitRecyclerView.setLayoutManager(layoutManager);
 
+        // set up the touch functionality of the recyclerview
         ItemTouchHelper.Callback callback = new HabitItemTouchHelper(habitRecyclerAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         habitRecyclerAdapter.setTouchHelper(itemTouchHelper);
         itemTouchHelper.attachToRecyclerView(habitRecyclerView);
 
+        // set the decorator and adapter for the recyclerview
         habitRecyclerView.setAdapter(habitRecyclerAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(habitRecyclerView.getContext(),
                 layoutManager.getOrientation());
@@ -189,37 +192,6 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
                 Log.d(DBTAG, "Was not able to get the data from Firestore to populate initial Habit list");
             }
         });
-
-//        // listener for if changes occur in our FireStore db, then we change it accordingly here
-//        usersCr.orderBy("order").addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-//                if (error == null && value != null){
-//                    for (DocumentChange dc : value.getDocumentChanges()) {
-//                        Habit h = dc.getDocument().toObject(Habit.class);
-//                        if (h == null) { continue; }
-//                        if (dc.getType() == DocumentChange.Type.ADDED && !habitList.contains(h)) {
-//                            habitList.add(h);
-//                            habitRecyclerAdapter.notifyItemInserted(habitList.size()-1);
-//                        }
-//                        else if (dc.getType() == DocumentChange.Type.MODIFIED) {
-//                            int index = habitList.indexOf(h);
-//                            habitList.remove(index);
-//                            habitList.add(index, h);
-//                            habitRecyclerAdapter.notifyItemChanged(index);
-//                        }
-//                        else if (dc.getType() == DocumentChange.Type.REMOVED){
-//                            int index = habitList.indexOf(h);
-//                            habitList.remove(h);
-//                            habitRecyclerAdapter.notifyItemRemoved(index);
-//                        }
-//                    }
-//                }
-//                else {
-//                    Log.d(DBTAG, "Could not get the snapshot of db changes or value was Null");
-//                }
-//            }
-//        });
     }
 
     /**
@@ -262,9 +234,10 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
     /**
      * Gets the total number of days the habit was supposed to be shown between a start date and today's date
      * while ignoring days that are not part of the {@link Habit}'s schedule
+     *
      * @param start     the {@link LocalDate} start date
      * @param schedule  the {@link List<Boolean>} schedule of the {@link Habit}
-     * @return
+     * @return the total number of days the Habit could have appeared as a long type
      */
     private static long getTotalNumDays(LocalDate start, List<Boolean> schedule) {
         // get the DayOfWeek that we're supposed to ignore
@@ -287,6 +260,7 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
     /**
      * Method for adding a habit to our {@link FirebaseFirestore} database as well as our {@link Habit}
      * object list that's shown on the current fragment.
+     *
      * @param habit the {@link Habit} to be added to the database and listview
      */
     public void addHabit(Habit habit) {
@@ -309,6 +283,7 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
      * This uses an index instead of an object name or object because a user can change the habit's name
      * as this can be used for editing a habit as well, so the index makes sure we reference the
      * correct habit that we are changing/deleting in the list
+     *
      * @param index the current index of the item to delete.
      */
     public void deleteHabit(int index) {
@@ -333,6 +308,7 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
     /**
      * Method for inserting a habit to our {@link FirebaseFirestore} database as well as our {@link Habit}
      * object list that's shown on the current fragment at a certain index
+     *
      * @param habit the {@link Habit} to be inserted to the database and listview
      * @param index the index that the habit is to be inserted into the list
      */
@@ -356,6 +332,12 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
         usersCr.document(habit.getTitle()).set(docData, SetOptions.merge());
     }
 
+    /**
+     * Override for our {@link HabitRecyclerAdapter} to call so we can handle the touch
+     * events for a single item in the {@link RecyclerView} list
+     *
+     * @param position the index of the position of the {@link Habit} in the {@link RecyclerView}
+     */
     @Override
     public void onHabitClick(int position) {
         Bundle editHabitBundle = new Bundle();

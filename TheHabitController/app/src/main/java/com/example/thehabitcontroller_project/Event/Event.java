@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Event;
 
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -28,6 +28,7 @@ public class Event implements Parcelable {
 //    private Location location;
     private Bitmap photo;
     private String photoString;
+    private String habitTitle;
     public static final int MAX_PHOTO_SIZE = 1000000; // 1MB
 
     public Event() {
@@ -42,12 +43,13 @@ public class Event implements Parcelable {
      * @param location     Location the event occurred
      * @param photoString  Photo of the event
      */
-    public Event(String title, String comment, Date dateEvent, String location, String photoString) {
+    public Event(String title, String comment, Date dateEvent, String location, String photoString, String habitTitle) {
         this.title = title;
         this.comment = comment;
         this.dateEvent = dateEvent;
         this.location = location; // will change back to type Location
         this.photoString = photoString;
+        this.habitTitle = habitTitle;
     }
 
     /**
@@ -68,6 +70,7 @@ public class Event implements Parcelable {
 //        location.setLongitude(0);
 //        location.setLatitude(0);
         photoString = in.readString();
+        habitTitle = in.readString();
     }
 
     /**
@@ -199,6 +202,27 @@ public class Event implements Parcelable {
     public void setPhotoString(String photoString) {
         this.photoString = photoString;
     }
+
+    /**
+     * Getter for the Event's corresponding habit title
+     * @return Returns a {@link String} containing the event's habit title
+     */
+    public String getHabitTitle() {
+        return habitTitle;
+    }
+
+    /**
+     * Setter for the Event's corresponding habit title
+     * @param title The title of the Event's corresponding habit as {@link String}
+     */
+    public void setHabitTitle(String title) {
+        this.habitTitle = habitTitle;
+    }
+
+    /**
+     * Getter for the Event's comment
+     * @return The Event's comment as a {@link String}
+     */
 
     /**
      * Part of the implementation of {@link Parcelable}, but was left as is.

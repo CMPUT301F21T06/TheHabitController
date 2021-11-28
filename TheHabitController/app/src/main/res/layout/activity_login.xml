@@ -5,7 +5,7 @@
     android:id="@+id/clLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".Login.LoginActivity">
 
     <ProgressBar
         android:id="@+id/pbLogin"
@@ -42,7 +42,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="E-mail" />
+            android:hint="E-mail"
+            android:id="@+id/tiLoginEmailTextField"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -61,7 +62,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:id="@+id/tiLoginPasswordTextField"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
