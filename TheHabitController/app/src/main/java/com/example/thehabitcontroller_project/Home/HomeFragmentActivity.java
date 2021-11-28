@@ -52,11 +52,19 @@ public class HomeFragmentActivity extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that inflates
+     * the fragment layout
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class that just
+     * calls its parent's implementation of onCreate()
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,9 +72,14 @@ public class HomeFragmentActivity extends Fragment {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+    /**
+     * Override for extending the {@link Fragment} class for handling
+     * building the structures after the view is created
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // set the title
         getActivity().setTitle("Today's Habits");
 
         // get our initial field values
