@@ -130,5 +130,9 @@
         android:id="@+id/viewUserHabitFragment"
         android:name="com.example.thehabitcontroller_project.Community.ViewUserHabitFragment"
         android:label="fragment_view_user_habit"
-        tools:layout="@layout/fragment_view_user_habit" />
+        tools:layout="@layout/fragment_view_user_habit" >
+        <action
+            android:id="@+id/action_viewUserHabitFragment_to_events"
+            app:destination="@id/events" />
+    </fragment>
 </navigation>
