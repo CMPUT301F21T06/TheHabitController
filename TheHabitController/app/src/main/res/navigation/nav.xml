@@ -19,9 +19,6 @@
         <action
             android:id="@+id/action_home2_to_community"
             app:destination="@id/community" />
-        <action
-            android:id="@+id/action_home2_to_addEventActivity"
-            app:destination="@id/addEventActivity" />
     </fragment>
 
     <fragment
@@ -53,7 +50,11 @@
         android:id="@+id/community"
         android:name="com.example.thehabitcontroller_project.CommunityFragmentActivity"
         android:label="fragment_community"
-        tools:layout="@layout/fragment_community" />
+        tools:layout="@layout/fragment_community" >
+        <action
+            android:id="@+id/action_community_to_viewUserHabitFragment"
+            app:destination="@id/viewUserHabitFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/events"
@@ -125,4 +126,9 @@
             android:id="@+id/action_editEventFragmentActivity_to_events"
             app:destination="@id/events" />
     </fragment>
+    <fragment
+        android:id="@+id/viewUserHabitFragment"
+        android:name="com.example.thehabitcontroller_project.ViewUserHabitFragment"
+        android:label="fragment_view_user_habit"
+        tools:layout="@layout/fragment_view_user_habit" />
 </navigation>

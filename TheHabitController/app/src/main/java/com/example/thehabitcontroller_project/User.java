@@ -1,5 +1,7 @@
 package com.example.thehabitcontroller_project;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -37,11 +39,26 @@ import java.util.Map;
  * @version 1.0.0
  */
 
-public class User {
-    private FirebaseAuth mAuth;
-    private FirebaseUser fbUser;
-    private String email, name, userId;
+public class User implements Parcelable, Comparable<User> {
+    private static FirebaseAuth mAuth;
+    private static FirebaseUser fbUser;
     private static User currentUser=null;
+    private String email, name, userId;
+
+    /**
+     * Parcel creator
+     */
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public interface UserAuthListener {
         /**
@@ -107,42 +124,53 @@ public class User {
      * @param email the email used to login
      * @param password the password used to login
      */
-    public User(String email, String password, UserAuthListener listener){
+    public static void login(String email, String password, UserAuthListener listener){
         Log.d("User-Login", "start sign in");
-        this.mAuth = FirebaseAuth.getInstance();
+        User.mAuth = FirebaseAuth.getInstance();
         Log.d("User-Login", "got instance");
-        this.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        User.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 Log.d("User-Login", "task complete");
                 if (task.isSuccessful()){
                     Log.d("User-Login", "signInWithEmail:success");
-                    User.this.fbUser=User.this.mAuth.getCurrentUser();
-                    User.this.userId=User.this.fbUser.getUid();
-                    User.this.name=User.this.fbUser.getDisplayName();
-                    listener.onAuthComplete(User.this);
+                    User.fbUser=User.mAuth.getCurrentUser();
+                    User.setCurrentUser(new User(User.fbUser.getEmail(),
+                            User.fbUser.getDisplayName(),
+                            User.fbUser.getUid()));
+                    listener.onAuthComplete(User.getCurrentUser());
                 } else {
                     Log.w("User-Login", "signInWithEmail:failure", task.getException());
-                    throw new SecurityException("Sign-in Failed.");
+                    listener.onAuthComplete(null);
                 }
             }
         });
     }
 
     /**
-     * Create empty User object, not logged in.
+     * Create empty User object.
      */
     public User(){
         this.mAuth = FirebaseAuth.getInstance();
     }
 
     /**
-     * Create User object, do not log in.
+     * Create User object, non-local users.
      */
     public User(String email, String name, String userId) {
         this.email=email;
         this.name=name;
         this.userId=userId;
+    }
+
+    /**
+     * Create User object from Parcel
+     * @param parcel
+     */
+    protected User(Parcel parcel){
+        email=parcel.readString();
+        name=parcel.readString();
+        userId=parcel.readString();
     }
 
     /**
@@ -162,46 +190,33 @@ public class User {
      * @param email    email of the new user
      * @param username username of the new user
      * @param password password of the new user
+     * @param listener listener when the task completes
      * @return a User object of the new user
      * @throws SecurityException on failure
      */
-    public static User Register(String email, String username, String password){
+    public static void Register(String email, String username, String password, UserAuthListener listener){
+        final String TAG = "User-Signup";
+        Log.d(TAG,"Start user signup: "+email+" "+username);
         User newUser = new User();
         newUser.mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Log.d("User-Signup", "createUserWithEmail:success");
+                    Log.d(TAG, "createUserWithEmail:success");
                     newUser.fbUser = newUser.mAuth.getCurrentUser();
                     newUser.userId = newUser.fbUser.getUid();
-                    Map<String, Object> user = new HashMap<>();
-                    user.put("name", username);
-                    user.put("id", newUser.userId);
-                    newUser.setUserName(username);
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("users")
-                            .add(user)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Log.d("User-Signup", "User added with ID: " + documentReference.getId());
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w("User-Signup", "Error adding document", e);
-                                    throw new SecurityException("Sign-up Failed.");
-                                }
-                            });
+                    newUser.name = username;
+                    newUser.email = email;
+                    User.setCurrentUser(newUser);
+                    firstLogin(u -> listener.onAuthComplete(u));
+                    User.setUserName(username);
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("User-Signup", "createUserWithEmail:failure", task.getException());
-                    throw new SecurityException("Sign-up Failed.");
+                    // If sign up fails, reset currentUser
+                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                    User.setCurrentUser(null);
                 }
             }
         });
-        return newUser;
     };
 
     /**
@@ -228,7 +243,7 @@ public class User {
     /**
      * Process first login (new user) routines (create a new document in database to store extra user info)
      */
-    public static void firstLogin(){
+    public static void firstLogin(UserAuthListener listener){
         Log.d("UserFirstLogin","First Login Event "+currentUser.getUserId());
         // new user
         Map<String, Object> user = new HashMap<>();
@@ -245,13 +260,14 @@ public class User {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.d("UserFisrtLogin", "User: " + currentUser.getUserId());
+                        listener.onAuthComplete(User.getCurrentUser());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("UserFisrtLogin", "Error adding document", e);
-                        throw new SecurityException("User failed first login process");
+                        listener.onAuthComplete(null);
                     }
                 });
     }
@@ -347,7 +363,7 @@ public class User {
      * Send a follow request to target user
      * @param target the target user
      */
-    public static void requestFollow(User target) {
+    public static void requestFollow(User target) throws RuntimeException{
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Log.d("RequestFollow",target.getUserId());
         db.collection("users").whereEqualTo("id",target.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -366,10 +382,35 @@ public class User {
         });
     }
 
+    /**
+     * Unfollow target user
+     * @param target the target user
+     */
+    public static void unfollow(User target) throws RuntimeException{
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Log.d("Unfollow",target.getUserId());
+        db.collection("users").whereEqualTo("id",target.getUserId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    Log.d("UserUnfollow","Complete fetching target user data");
+                    DocumentReference d = task.getResult().getDocuments().get(0).getReference();
+                    Map<String,Object> upd= new HashMap<>();
+                    upd.put("follower",FieldValue.arrayRemove(currentUser.userId));
+                    d.update(upd);
+                } else {
+                    throw new RuntimeException("Failed to unfollow user "+target.userId);
+                }
+            }
+        });
+    }
+
+
+
     /** Accept a follow request from user
      * @param user user to add into follower list
      */
-    public static void acceptFollow(User user){
+    public static void acceptFollow(User user) throws RuntimeException{
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").whereEqualTo("id", currentUser.userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -383,7 +424,29 @@ public class User {
                     upd.put("followReq",FieldValue.arrayRemove(user.userId));
                     d.update(upd);
                 }else{
-                    throw new RuntimeException("Failed to accpet user "+user.userId);
+                    throw new RuntimeException("Failed to accept user "+user.userId);
+                }
+            }
+        });
+    }
+
+    /** Reject a follow request from user
+     * @param user user to remove from follow requests list
+     */
+    public static void rejectFollow(User user) throws RuntimeException{
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(currentUser.userId)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    Log.d("UserRejectFollow","Complete fetching current user data");
+                    DocumentReference d = task.getResult().getReference();
+                    Map<String,Object> upd= new HashMap<>();
+                    upd.put("followReq",FieldValue.arrayRemove(user.userId));
+                    d.update(upd);
+                }else{
+                    throw new RuntimeException("Failed to reject user "+user.userId);
                 }
             }
         });
@@ -494,7 +557,26 @@ public class User {
     /**
      * Sign out the user
      */
-    public void signOut(){
-        mAuth.signOut();
+    public static void signOut(){
+        if (currentUser!=null) {
+            currentUser.mAuth.signOut();
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(email);
+        parcel.writeString(name);
+        parcel.writeString(userId);
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return userId.compareTo(user.getUserId());
     }
 }

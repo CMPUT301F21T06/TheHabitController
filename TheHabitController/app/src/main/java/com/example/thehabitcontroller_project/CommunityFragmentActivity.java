@@ -1,10 +1,13 @@
 package com.example.thehabitcontroller_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,17 +15,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CommunityFragmentActivity#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class CommunityFragmentActivity extends Fragment {
 
     private UserArrayAdapter userArrayAdapter;
+    private ArrayList<User> userArrayList;
 
     public CommunityFragmentActivity() {
         // Required empty public constructor
@@ -56,8 +61,20 @@ public class CommunityFragmentActivity extends Fragment {
         RecyclerView rvFollowing = view.findViewById(R.id.rvFollowing);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getContext());
         rvFollowing.setLayoutManager(layoutManager);
-        ArrayList<User> userArrayList=new ArrayList<>();
-        userArrayAdapter= new UserArrayAdapter(getContext(), userArrayList);
+        userArrayList=new ArrayList<>();
+
+        // item click listener
+        UserArrayAdapter.ClickListener clickListener = new UserArrayAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int pos, User itemUser) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("user",itemUser);
+                NavController navController= Navigation.findNavController(view);
+                navController.navigate(R.id.action_community_to_viewUserHabitFragment,bundle);
+            }
+        };
+
+        userArrayAdapter= new UserArrayAdapter(getContext(), userArrayList, clickListener);
         rvFollowing.setAdapter(userArrayAdapter);
         User.getCurrentUser().getFollowing(new User.UserListDataListener() {
             @Override
@@ -67,8 +84,18 @@ public class CommunityFragmentActivity extends Fragment {
                 userArrayAdapter.notifyDataSetChanged();
             }
         });
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvFollowing.getContext(),
                 layoutManager.getOrientation());
         rvFollowing.addItemDecoration(dividerItemDecoration);
+
+        FloatingActionButton fabSearch = view.findViewById(R.id.fabSearch);
+        fabSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),UserSearchActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
