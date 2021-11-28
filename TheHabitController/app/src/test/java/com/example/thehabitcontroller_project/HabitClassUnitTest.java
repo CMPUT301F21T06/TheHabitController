@@ -3,6 +3,8 @@ package com.example.thehabitcontroller_project;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.thehabitcontroller_project.Habit.Habit;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

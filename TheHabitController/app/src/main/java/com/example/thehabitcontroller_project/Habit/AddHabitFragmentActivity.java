@@ -1,15 +1,11 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Habit;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -21,6 +17,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.thehabitcontroller_project.R;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -98,7 +95,7 @@ public class AddHabitFragmentActivity extends Fragment{
             @Override
             public void onClick(View v) {
                 // initialize our DatePicker UI
-                com.example.thehabitcontroller_project.DatePicker date = new com.example.thehabitcontroller_project.DatePicker();
+                com.example.thehabitcontroller_project.Helper.DatePicker date = new com.example.thehabitcontroller_project.Helper.DatePicker();
 
                 // Set Up Current Date Into dialog
                 Calendar calender = Calendar.getInstance();

@@ -1,4 +1,4 @@
-package com.example.thehabitcontroller_project;
+package com.example.thehabitcontroller_project.Habit;
 
 public interface ItemTouchHelperAdapter {
 

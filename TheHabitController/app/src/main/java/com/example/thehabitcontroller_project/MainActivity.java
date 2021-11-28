@@ -2,28 +2,24 @@ package com.example.thehabitcontroller_project;
 
 import static androidx.navigation.Navigation.findNavController;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.example.thehabitcontroller_project.Community.CommunityFragmentActivity;
+import com.example.thehabitcontroller_project.Community.User;
+import com.example.thehabitcontroller_project.Event.EventsFragmentActivity;
+import com.example.thehabitcontroller_project.Habit.AddHabitFragmentActivity;
+import com.example.thehabitcontroller_project.Habit.Habit;
+import com.example.thehabitcontroller_project.Habit.HabitsFragmentActivity;
+import com.example.thehabitcontroller_project.Home.HomeFragmentActivity;
+import com.example.thehabitcontroller_project.Login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.Arrays;
 
 /**
  * @author mainul1
