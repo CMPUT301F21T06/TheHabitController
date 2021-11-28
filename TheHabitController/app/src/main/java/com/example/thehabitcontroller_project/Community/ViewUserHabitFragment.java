@@ -1,6 +1,11 @@
 package com.example.thehabitcontroller_project.Community;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,25 +17,16 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.thehabitcontroller_project.Habit.Habit;
+import com.example.thehabitcontroller_project.Habit.HabitRecyclerAdapter;
+import com.example.thehabitcontroller_project.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
-import com.example.thehabitcontroller_project.Habit.Habit;
-import com.example.thehabitcontroller_project.R;
-
 import java.util.List;
 
 /**
@@ -78,7 +74,7 @@ public class ViewUserHabitFragment extends Fragment implements HabitRecyclerAdap
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("View User Habits");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         // init NavController
         navController = Navigation.findNavController(view);
 
@@ -97,7 +93,8 @@ public class ViewUserHabitFragment extends Fragment implements HabitRecyclerAdap
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userDr = db.collection("users").document(displayUser.getUserId());
         CollectionReference usersCr = userDr.collection("Habits");
-        usersCr.orderBy("order").get().addOnSuccessListener(queryDocumentSnapshots -> {
+        Query q = usersCr.whereEqualTo("public",true);
+        q.orderBy("order").get().addOnSuccessListener(queryDocumentSnapshots -> {
             // clear our habit list if there is anything in it
             habitList.clear();
             for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
@@ -112,35 +109,16 @@ public class ViewUserHabitFragment extends Fragment implements HabitRecyclerAdap
     @Override
     public void onHabitClick(int position) {
         // view habit event list
+        Bundle editHabitBundle = new Bundle();
+        Habit h = habitList.get(position);
+        editHabitBundle.putParcelable("Habit", h);
+        editHabitBundle.putInt("index", position);
+        navController.navigate(R.id.action_habits_to_editHabitFragmentActivity, editHabitBundle);
     }
 
-    /**
-     * This hook is called whenever an item in your options menu is selected.
-     * The default implementation simply returns false to have the normal
-     * processing happen (calling the item's Runnable or sending a message to
-     * its Handler as appropriate).  You can use this method for any items
-     * for which you would like to do processing without those other
-     * facilities.
-     *
-     * <p>Derived classes should call through to the base class for it to
-     * perform the default menu handling.
-     *
-     * @param item The menu item that was selected.
-     * @return boolean Return false to allow normal menu processing to
-     * proceed, true to consume it here.
-     * @see #onCreateOptionsMenu
-     */
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Log.d(TAG,"MenuItem:"+item.getItemId());
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getActivity().onBackPressed();
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onPause() {
+        super.onPause();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
-
 }

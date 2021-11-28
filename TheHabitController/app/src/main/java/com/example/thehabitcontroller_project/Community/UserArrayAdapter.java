@@ -21,21 +21,36 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
     private Context context;
     private List<User> userList;
     private ClickListener clickListener;
+    private static final int VIEW_TYPE_EMPTY=1;
+    private static final int VIEW_TYPE_NORMAL=0;
 
+    @Override
+    public int getItemViewType(int position) {
+        if (userList.isEmpty()){
+            return VIEW_TYPE_EMPTY;
+        } else {
+            return VIEW_TYPE_NORMAL;
+        }
+    }
 
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textUsername;
-        private final TextView textEmail;
+        private TextView textUsername;
+        private TextView textEmail;
+        private TextView textEmptyMsg;
 
-        public ViewHolder(View view) {
+        public ViewHolder(View view, int viewType) {
             super(view);
             // Define click listener for the ViewHolder's View
-            textUsername = (TextView) view.findViewById(R.id.textUsername);
-            textEmail = (TextView) view.findViewById(R.id.textEmail);
+            if (viewType==VIEW_TYPE_NORMAL){
+                textUsername = (TextView) view.findViewById(R.id.textUsername);
+                textEmail = (TextView) view.findViewById(R.id.textEmail);
+            } else {
+                textEmptyMsg = (TextView) view.findViewById(R.id.tvEmptyMsg);
+            }
         }
 
         public TextView getTextUsername() {
@@ -44,6 +59,10 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
 
         public TextView getTextEmail() {
             return textEmail;
+        }
+
+        public TextView getTextEmptyMsg() {
+            return textEmptyMsg;
         }
     }
 
@@ -63,10 +82,17 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.user_content, viewGroup, false);
-
-        return new ViewHolder(view);
+        View view;
+        switch (viewType){
+            case VIEW_TYPE_EMPTY:
+                view=LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.rv_empty, viewGroup, false);
+                return new ViewHolder(view,VIEW_TYPE_EMPTY);
+            default:
+                view=LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.user_content, viewGroup, false);
+                return new ViewHolder(view,VIEW_TYPE_NORMAL);
+        }
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -75,11 +101,16 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.getTextUsername().setText(userList.get(position).getUserName());
-        viewHolder.getTextEmail().setText(userList.get(position).getEmail());
-        viewHolder.itemView.setOnClickListener(view ->
-                clickListener.onItemClick(position, userList.get(position))
-        );
+        if (viewHolder.getItemViewType()==VIEW_TYPE_EMPTY){
+            viewHolder.getTextEmptyMsg().setText("You are currently following nobody.");
+        }else{
+            viewHolder.getTextUsername().setText(userList.get(position).getUserName());
+            viewHolder.getTextEmail().setText(userList.get(position).getEmail());
+            viewHolder.itemView.setOnClickListener(view ->
+                    clickListener.onItemClick(position, userList.get(position))
+            );
+        }
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
