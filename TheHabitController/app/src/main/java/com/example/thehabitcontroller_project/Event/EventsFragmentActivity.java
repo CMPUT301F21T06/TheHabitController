@@ -164,7 +164,12 @@ public class EventsFragmentActivity extends Fragment {
         Bundle currBundle = getArguments();
         if (currBundle != null) {
             this.dailyHabit = currBundle.getParcelable("DailyHabit");
-            getActivity().setTitle("'" + dailyHabit.getTitle() + "'" + " Events");
+            if (this.dailyHabit != null) {
+                getActivity().setTitle("'" + dailyHabit.getTitle() + "'" + " Events");
+            }
+            else {
+                getActivity().setTitle("Events");
+            }
         }
 
         // initializes the Collection reference to the user's collection
