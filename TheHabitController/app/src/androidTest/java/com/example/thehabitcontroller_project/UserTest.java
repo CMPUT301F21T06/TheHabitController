@@ -16,7 +16,7 @@ import java.util.Map;
 public class UserTest {
     @Test
     public void testLogin() throws InterruptedException {
-        User loginUser = new User("test@test.com", "asdf1234", new User.UserAuthListener() {
+        User.login("test@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
                 Log.d("TestLogin","Username: "+u.getUserName());
@@ -25,29 +25,26 @@ public class UserTest {
             }
         });
         Thread.sleep(2000);
-        loginUser.signOut();
+        User.signOut();
         Thread.sleep(1000);
     }
 
     @Ignore
     public void testRegister() throws InterruptedException {
         String username=String.valueOf(Instant.now().getEpochSecond());
-        User newUser = User.Register(username+"@test.com",username, "123456");
-        Thread.sleep(4000);
-    }
-
-    public void testRegisterTU() throws InterruptedException {
-        String username=String.valueOf(Instant.now().getEpochSecond());
-        User newUser = User.Register("test@test.com","Test", "123456");
+        User.Register(username+"@test.com",username, "123456", u -> {
+            if (u!=null){
+                return;
+            }
+        });
         Thread.sleep(4000);
     }
 
     @Test
     public void testSetUserName() throws InterruptedException{
-        User loginUser = new User("test3@test.com", "asdf1234", new User.UserAuthListener() {
+        User.login("test3@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User loginUser) {
-                User.setCurrentUser(loginUser);
                 User.setUserName("Mary Brown");
 
                 try{
@@ -56,7 +53,7 @@ public class UserTest {
 
                 }
 
-                User.getCurrentUser().signOut();
+                User.signOut();
             }
         });
         Thread.sleep(10000);
@@ -85,7 +82,7 @@ public class UserTest {
 
     @Ignore
     public void testUserFollow() throws InterruptedException{
-        User tu= new User("test@test.com", "asdf1234", new User.UserAuthListener() {
+        User.login("test@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
                 User.getUserFromId("BowQxXFCfDei5cR35yZ4Obrv2nG2", new User.UserDataListener() {
@@ -107,7 +104,7 @@ public class UserTest {
 
     @Ignore
     public void testUserAcceptFollow() throws InterruptedException{
-        User tu= new User("test3@test.com", "asdf1234", new User.UserAuthListener() {
+        User.login("test3@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
                 User.setCurrentUser(u);
@@ -131,7 +128,7 @@ public class UserTest {
     @Ignore
     public void testUserFollowing() throws InterruptedException{
         ArrayList<User> a = new ArrayList<>();
-        User tu= new User("test@test.com", "asdf1234", new User.UserAuthListener() {
+        User.login("test@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
                 User.setCurrentUser(u);
@@ -169,7 +166,7 @@ public class UserTest {
     @Ignore
     public void testUserFollowReq() throws InterruptedException{
         ArrayList<User> a = new ArrayList<>();
-        User tu= new User("test2@test.com", "asdf1234", new User.UserAuthListener() {
+        User.login("test2@test.com", "asdf1234", new User.UserAuthListener() {
             @Override
             public void onAuthComplete(User u) {
                 User.setCurrentUser(u);

@@ -3,6 +3,9 @@ package com.example.thehabitcontroller_project;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -232,8 +235,14 @@ public class Habit implements Parcelable, Comparable<Habit>{
      * @return the value that the Habits' titles compare to
      */
     @Override
-    public int compareTo(Habit habit) {
+    public int compareTo(@NonNull Habit habit) {
         return title.compareTo(habit.getTitle());
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return (this.getClass() != obj.getClass() || obj == null) ?
+                this.getTitle() == ((Habit) obj).getTitle() : false;
     }
 
     /**

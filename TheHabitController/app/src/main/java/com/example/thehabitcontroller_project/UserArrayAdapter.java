@@ -19,8 +19,13 @@ import java.util.List;
 
 public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.ViewHolder> {
 
+    interface ClickListener{
+        public void onItemClick(int pos, User itemUser);
+    }
+
     private Context context;
     private List<User> userList;
+    private ClickListener clickListener;
 
 
     /**
@@ -28,16 +33,22 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
      * (custom ViewHolder).
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
+        private final TextView textUsername;
+        private final TextView textEmail;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-            textView = (TextView) view.findViewById(R.id.textUsername);
+            textUsername = (TextView) view.findViewById(R.id.textUsername);
+            textEmail = (TextView) view.findViewById(R.id.textEmail);
         }
 
-        public TextView getTextView() {
-            return textView;
+        public TextView getTextUsername() {
+            return textUsername;
+        }
+
+        public TextView getTextEmail() {
+            return textEmail;
         }
     }
 
@@ -47,9 +58,10 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
      * @param userList String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-    public UserArrayAdapter(Context context,List<User> userList) {
+    public UserArrayAdapter(Context context,List<User> userList, ClickListener clickListener) {
         this.context=context;
         this.userList=userList;
+        this.clickListener=clickListener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -68,8 +80,11 @@ public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.View
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.getTextView().setText(userList.get(position).getUserName());
-        viewHolder.itemView.setOnClickListener(view -> Toast.makeText(view.getContext(), "The user has no public habits.",Toast.LENGTH_SHORT).show());
+        viewHolder.getTextUsername().setText(userList.get(position).getUserName());
+        viewHolder.getTextEmail().setText(userList.get(position).getEmail());
+        viewHolder.itemView.setOnClickListener(view ->
+                clickListener.onItemClick(position, userList.get(position))
+        );
     }
 
     // Return the size of your dataset (invoked by the layout manager)

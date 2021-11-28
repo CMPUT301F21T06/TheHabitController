@@ -65,6 +65,7 @@ public class HomeFragmentActivity extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle("Today's Habits");
 
         // get our initial field values
         NavController navController = Navigation.findNavController(view);
@@ -84,8 +85,8 @@ public class HomeFragmentActivity extends Fragment {
                 // send over to AddHabitEventActivity to handle
                 Bundle habitBundle = new Bundle();
                 Habit h = dailyHabitArrayAdapter.getItem(i);
-                habitBundle.putParcelable("Habit", h);
-                navController.navigate(R.id.action_home2_to_addEventActivity, habitBundle);
+                habitBundle.putParcelable("DailyHabit", h);
+                navController.navigate(R.id.action_home2_to_events, habitBundle);
             }
         });
     }
@@ -112,7 +113,7 @@ public class HomeFragmentActivity extends Fragment {
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                     Habit habit = doc.toObject(Habit.class);
                     // if the habit is supposed to be scheduled for today, add to our daily list
-                    if (habit.getSchedule().get(dayOfWeekIndex)) {
+                    if (habit.getSchedule() != null && habit.getSchedule().get(dayOfWeekIndex)) {
                         dailyHabitList.add(habit);
                     }
                 }
