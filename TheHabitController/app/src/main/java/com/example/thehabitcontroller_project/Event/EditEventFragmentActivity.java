@@ -190,10 +190,12 @@ public class EditEventFragmentActivity extends Fragment {
 
                 String location = "";
 
+                String habitTitle = selectedEvent.getHabitTitle();
+
                 // put the new event in the bundle and the index of the event from the original list
                 editEventBundle.putParcelable(
                         "editedEvent",
-                        new Event(eventTitle, eventComment, inputDate, location, selectedEvent.getPhotoString())
+                        new Event(eventTitle, eventComment, inputDate, location, selectedEvent.getPhotoString(), habitTitle)
                 );
                 editEventBundle.putInt("index", currEventBundle.getInt("index"));
 
