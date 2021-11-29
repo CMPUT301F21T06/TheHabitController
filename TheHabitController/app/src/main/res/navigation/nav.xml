@@ -53,7 +53,9 @@
         tools:layout="@layout/fragment_community" >
         <action
             android:id="@+id/action_community_to_viewUserHabitFragment"
-            app:destination="@id/viewUserHabitFragment" />
+            app:destination="@id/viewUserHabitFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
