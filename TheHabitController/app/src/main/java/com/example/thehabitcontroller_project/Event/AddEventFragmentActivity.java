@@ -178,9 +178,7 @@ public class AddEventFragmentActivity extends Fragment{
                 // collects info entered by user
                 String event = title.getText().toString();
                 String eventComment = comment.getText().toString();
-
                 String eventLocation = "location"; // location not implemented
-                //Location eventLocation = new Location("Home");
 
                 // initialize database call
                 FirebaseFirestore db =  FirebaseFirestore.getInstance();

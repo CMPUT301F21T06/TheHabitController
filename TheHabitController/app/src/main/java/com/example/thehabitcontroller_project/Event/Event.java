@@ -25,7 +25,6 @@ public class Event implements Parcelable {
     private String comment; // optional comment up to 20 characters
     private Date dateEvent;
     private String location; // location not implemented
-    //private Location location;
     private String photoString;
     private String habitTitle;
     public static final int MAX_PHOTO_SIZE = 1000000; // 1MB
@@ -46,7 +45,7 @@ public class Event implements Parcelable {
         this.title = title;
         this.comment = comment;
         this.dateEvent = dateEvent;
-        this.location = location; // will change back to type Location
+        this.location = location;
         this.photoString = photoString;
         this.habitTitle = habitTitle;
     }
@@ -61,12 +60,8 @@ public class Event implements Parcelable {
         comment = in.readString();
         int maxLength = 20; // limit comment length to 20
         comment = comment.substring(0, maxLength);
-
         dateEvent = new Date(in.readLong());
         location = "location"; // location not implemented
-        //location = new Location("Home");
-        //location.setLongitude(0);
-        //location.setLatitude(0);
         photoString = in.readString();
         habitTitle = in.readString();
     }
@@ -116,6 +111,8 @@ public class Event implements Parcelable {
      * @param comment The Event's reason as a {@link String}
      */
     public void setComment(String comment) {
+        int maxLength = 20; // limit comment length to 20
+        comment = comment.substring(0, maxLength);
         this.comment = comment;
     }
 
@@ -177,9 +174,9 @@ public class Event implements Parcelable {
 
     /**
      * Setter for the Event's corresponding habit title
-     * @param title The title of the Event's corresponding habit as {@link String}
+     * @param habitTitle The title of the Event's corresponding habit as {@link String}
      */
-    public void setHabitTitle(String title) {
+    public void setHabitTitle(String habitTitle) {
         this.habitTitle = habitTitle;
     }
 
@@ -209,8 +206,7 @@ public class Event implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(comment);
         parcel.writeLong(dateEvent.getTime());
-        parcel.writeString(location); // temporary until implemented
-//        location.writeToParcel(parcel, i);
+        parcel.writeString(location);
         parcel.writeValue(photoString);
     }
 
