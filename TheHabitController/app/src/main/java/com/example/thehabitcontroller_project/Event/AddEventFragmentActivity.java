@@ -151,7 +151,8 @@ public class AddEventFragmentActivity extends Fragment{
                 }
 
                 // set empty photo if no photo taken
-                String photoString = "";
+                currentPhotoPath = "";
+//                String photoString = "";
                 // display photo if there is one
                 if (eventPhotoView.getDrawable() != null) {
                     photo = ((BitmapDrawable) eventPhotoView.getDrawable()).getBitmap();
@@ -179,7 +180,7 @@ public class AddEventFragmentActivity extends Fragment{
                 habitTitle = habit.getTitle();
 
                 // add the new event to the bundle
-                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, photoString, habitTitle));
+                addEventBundle.putParcelable("addEvent", new Event(event, eventComment, inputDate, eventLocation, currentPhotoPath, habitTitle));
                 addEventBundle.putParcelable("DailyHabit", habit);
 
                 // navigate to the event list view
