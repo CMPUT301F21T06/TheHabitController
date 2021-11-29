@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         return navController.navigateUp();
     }
+
 }
 
 
@@ -134,3 +135,5 @@ notificationCounter.increaseNumber(); // Will increase the number beside the not
 
 
  */
+
+

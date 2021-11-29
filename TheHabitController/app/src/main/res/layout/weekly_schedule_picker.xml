@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/scheduleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/scheduleTitle"
+            android:textColor="@color/black"
+            android:textSize="18dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/weekly_chip_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/monday_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:text="@string/chipMonday" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/tuesday_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:text="@string/chipTuesday" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/wednesday_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:text="@string/chipWednesday" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/thursday_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:text="@string/chipThursday" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/friday_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:text="@string/chipFriday" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/saturday_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:text="@string/chipSaturday" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/sunday_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:text="@string/chipSunday" />
+        </com.google.android.material.chip.ChipGroup>
+</LinearLayout>
