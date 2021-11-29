@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.thehabitcontroller_project.Event.Event;
 import com.example.thehabitcontroller_project.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -302,6 +303,22 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
             // add the ordering for the habit
             docData.put("order", i);
             usersCr.document(habitList.get(i).getTitle()).set(docData, SetOptions.merge());
+        }
+
+        // delete all habit events related to this habit in the database
+        final CollectionReference relatedEvents = usersCr.document(h.getTitle()).collection("Events");
+        if (relatedEvents != null) {
+            relatedEvents.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        Event e = (Event) doc.toObject(Event.class);
+                        if (e != null) {
+                            relatedEvents.document(e.getTitle()).delete();
+                        }
+                    }
+                }
+            });
         }
     }
 
