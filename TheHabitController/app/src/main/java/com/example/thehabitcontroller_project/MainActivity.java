@@ -12,6 +12,10 @@ import androidx.navigation.ui.NavigationUI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.thehabitcontroller_project.Community.CommunityFragmentActivity;
 import com.example.thehabitcontroller_project.Community.User;
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     final private String TAG = "MainActivity";
     private ListenerRegistration lr;
     private List<String> followReqId = new ArrayList<>();
+    static int notifCount = 0;
+    private TextView tvNc;
 
 
     @Override
@@ -96,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (snapshot.get("followReq")!=null){
                                     followReqId.addAll((List<String>) snapshot.get("followReq"));
                                     Log.d(TAG,"FRI:"+followReqId);
+                                    setNotifCount(followReqId.size());
                                 }
                             }
                         }
@@ -154,5 +161,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu,menu);
+
+        View count = menu.findItem(R.id.miBell).getActionView();
+        tvNc=count.findViewById(R.id.tvCount);
+        tvNc.setText(String.valueOf(notifCount));
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setNotifCount(int n){
+        notifCount=n;
+        if (tvNc!=null){
+            tvNc.setText(String.valueOf(notifCount));
+        }
     }
 }

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/miBell"
-        android:actionLayout="@layout/bell"
-        android:title="Notification"
-        app:showAsAction="always" />
+        app:actionLayout="@layout/bell"
+        app:showAsAction="always"
+        android:title="Bell" />
 </menu>
