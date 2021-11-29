@@ -11,6 +11,7 @@ import androidx.navigation.ui.NavigationUI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 
 import com.example.thehabitcontroller_project.Community.CommunityFragmentActivity;
 import com.example.thehabitcontroller_project.Community.User;
@@ -109,4 +110,30 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         return navController.navigateUp();
     }
+
 }
+
+
+
+
+
+/***
+ for marcus
+
+
+
+ Button button; // By clicking follow,this button will activate
+
+ notificationCounter = new NotificationCounter(findViewById(R.id.bell));
+ button.setOnClickListner(new View.onClickListner()){
+@Override
+public void onClick(View view){
+notificationCounter.increaseNumber(); // Will increase the number beside the notification until 99, if you feel like it, increase the number
+}
+});
+
+
+
+ */
+
+
