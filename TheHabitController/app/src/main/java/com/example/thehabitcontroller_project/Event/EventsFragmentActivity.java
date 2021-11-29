@@ -184,6 +184,7 @@ public class EventsFragmentActivity extends Fragment {
                 eventList.clear();
                 String habitTitle = dailyHabit.getTitle();
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                    // only load the events corresponding to the selected habit
                     if (habitTitle.equals(doc.getString("habitTitle"))) {
                         eventList.add(doc.toObject(Event.class));
                     }
