@@ -113,6 +113,7 @@ public class EventsFragmentActivity extends Fragment {
                 Event e = eventArrayAdapter.getItem(i);
                 editEventBundle.putParcelable("Event", e);
                 editEventBundle.putInt("index", i);
+                editEventBundle.putParcelable("DailyHabit", dailyHabit);
                 navController.navigate(R.id.action_events_to_editEventFragmentActivity, editEventBundle);
             }
         });
@@ -181,8 +182,9 @@ public class EventsFragmentActivity extends Fragment {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 // start with an empty list then add all events to the list
                 eventList.clear();
+                String habitTitle = dailyHabit.getTitle();
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                    if (doc.getString("habitTitle").equals(dailyHabit.getTitle())) {
+                    if (habitTitle.equals(doc.getString("habitTitle"))) {
                         eventList.add(doc.toObject(Event.class));
                     }
                 }
@@ -196,20 +198,6 @@ public class EventsFragmentActivity extends Fragment {
                 Log.d(DBTAG, "Was not able to get the data from Firestore to populate initial Event list");
             }
         });
-
-//        // if changes occur in the FIreStore db it will clear the list and re-add the events
-//        usersCr.addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-//                eventList.clear();
-//                for (DocumentSnapshot doc : value.getDocuments()) {
-//                    if (doc.getString("habitTitle").equals(dailyHabit.getTitle())) {
-//                        eventList.add(doc.toObject(Event.class));
-//                    }
-//                }
-//                eventArrayAdapter.notifyDataSetChanged();
-//            }
-//        });
     }
 
     /**

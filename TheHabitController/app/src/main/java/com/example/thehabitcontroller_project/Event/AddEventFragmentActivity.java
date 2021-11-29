@@ -195,7 +195,15 @@ public class AddEventFragmentActivity extends Fragment{
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().onBackPressed();
+                // start our cancel event bundle
+                Bundle cancelEventBundle = new Bundle();
+                cancelEventBundle.putParcelable("DailyHabit", habit);
+
+                // navigate back to event fragment activity
+                Navigation.findNavController(view).navigate(
+                        R.id.action_addEventActivity_to_events,
+                        cancelEventBundle
+                );
             }
         });
 
