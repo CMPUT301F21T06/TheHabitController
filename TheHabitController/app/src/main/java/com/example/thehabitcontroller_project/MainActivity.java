@@ -2,16 +2,30 @@ package com.example.thehabitcontroller_project;
 
 import static androidx.navigation.Navigation.findNavController;
 
+import static com.example.thehabitcontroller_project.R.menu.popup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.TaskStackBuilder;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.thehabitcontroller_project.Community.CommunityFragmentActivity;
 import com.example.thehabitcontroller_project.Community.User;
@@ -35,9 +49,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  * @see CommunityFragmentActivity
  * @see AddHabitFragmentActivity
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity<menu_show> extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     NavController navController;
+
 
     @Override
     /**
@@ -49,7 +64,28 @@ public class MainActivity extends AppCompatActivity {
             signIn();
         }
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         setUpNavigation();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.popup,popup);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+
+        int id = item.getItemId();
+        if(id == R.id.accept) {
+            Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -111,7 +147,12 @@ public class MainActivity extends AppCompatActivity {
         return navController.navigateUp();
     }
 
+
+
+    }
 }
+}
+
 
 
 
@@ -135,5 +176,3 @@ notificationCounter.increaseNumber(); // Will increase the number beside the not
 
 
  */
-
-
