@@ -60,7 +60,6 @@ public class EditEventFragmentActivity extends Fragment {
     private EditText comment;
     private TextView date;
     private Bitmap photo;
-    private String photoString;
     private ImageView eventPhotoView;
 
     private Button setDateButton;
@@ -70,9 +69,7 @@ public class EditEventFragmentActivity extends Fragment {
     private Button cancelButton;
     private Button deleteButton;
 
-    static final int REQUEST_TAKE_PHOTO = 1;
     private String currentPhotoPath;
-    private String habitTitle;
     private Habit habit;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     final long ONE_MEGABYTE = 1024 * 1024;
@@ -142,9 +139,6 @@ public class EditEventFragmentActivity extends Fragment {
                     eventPhotoView.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                 }
             });
-//            eventPhotoView.setImageBitmap(selectedEvent.photoStringToBitmap());
-//            eventPhotoView.setVisibility(View.VISIBLE);
-//            photoString = selectedEvent.getPhotoString();
         }
 
         // set the onclicklistener for our set date button to pick a date
@@ -225,7 +219,7 @@ public class EditEventFragmentActivity extends Fragment {
 
                 // set empty photo if no photo taken
                 currentPhotoPath = "";
-                String photoString = "";
+                String photoString = null;
                 // display photo if there is one
                 byte[] photoBytes = new byte[0];
                 // display photo if there is one

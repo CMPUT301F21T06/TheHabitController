@@ -163,7 +163,7 @@ public class AddEventFragmentActivity extends Fragment{
 
                 // set empty photo if no photo taken
                 currentPhotoPath = "";
-                String photoString = "";
+                String photoString = null;
                 // display photo if there is one
                 byte[] photoBytes = new byte[0];
                 if (eventPhotoView.getDrawable() != null) {
@@ -249,6 +249,7 @@ public class AddEventFragmentActivity extends Fragment{
     private void registerForActivityResult(ActivityResultContracts.TakePicture takePicture) {
     }
 
+    // gets the current Habit from the bundle
     private void getHabitBundle(View view) {
         Bundle currBundle = getArguments();
         if (currBundle != null) {
@@ -274,6 +275,7 @@ public class AddEventFragmentActivity extends Fragment{
         }
     };
 
+    // Creates the image file when taking a picture
     private File createImageFile() throws IOException {
         // Create an image file name
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -291,6 +293,7 @@ public class AddEventFragmentActivity extends Fragment{
         return image;
     }
 
+    // Used to launch the camera and take a picture
     private void takePicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             // Create the File where the photo should go
@@ -310,6 +313,7 @@ public class AddEventFragmentActivity extends Fragment{
         }
     }
 
+    // Displays the photo in the imageview
     private void showPhoto() {
         // Get the dimensions of the View
         int targetW = eventPhotoView.getWidth();
