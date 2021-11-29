@@ -1,14 +1,17 @@
 package com.example.thehabitcontroller_project.Community;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -20,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.thehabitcontroller_project.Habit.Habit;
 import com.example.thehabitcontroller_project.Habit.HabitRecyclerAdapter;
 import com.example.thehabitcontroller_project.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -104,6 +108,33 @@ public class ViewUserHabitFragment extends Fragment implements HabitRecyclerAdap
             // render changes
             habitRecyclerAdapter.notifyDataSetChanged();
         }).addOnFailureListener(e -> Log.d(TAG, "Failed to initialize habit list"));
+
+        FloatingActionButton fabUnfollow = view.findViewById(R.id.fabUnfollow);
+        fabUnfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Unfollow")
+                        .setMessage("Unfollow user \""+displayUser.getUserName()+"\"?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                User.unfollow(displayUser);
+                                Toast.makeText(getContext(),
+                                        "User unfollowed.", Toast.LENGTH_SHORT).show();
+                                getActivity().onBackPressed();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                return;
+                            }
+                        })
+                        .create();
+                alertDialog.show();
+            }
+        });
     }
 
     @Override
