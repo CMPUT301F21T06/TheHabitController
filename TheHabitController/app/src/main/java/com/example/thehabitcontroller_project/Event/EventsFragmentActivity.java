@@ -197,19 +197,19 @@ public class EventsFragmentActivity extends Fragment {
             }
         });
 
-        // if changes occur in the FIreStore db it will clear the list and re-add the events
-        usersCr.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                eventList.clear();
-                for (DocumentSnapshot doc : value.getDocuments()) {
-                    if (doc.getString("habitTitle").equals(dailyHabit.getTitle())) {
-                        eventList.add(doc.toObject(Event.class));
-                    }
-                }
-                eventArrayAdapter.notifyDataSetChanged();
-            }
-        });
+//        // if changes occur in the FIreStore db it will clear the list and re-add the events
+//        usersCr.addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+//                eventList.clear();
+//                for (DocumentSnapshot doc : value.getDocuments()) {
+//                    if (doc.getString("habitTitle").equals(dailyHabit.getTitle())) {
+//                        eventList.add(doc.toObject(Event.class));
+//                    }
+//                }
+//                eventArrayAdapter.notifyDataSetChanged();
+//            }
+//        });
     }
 
     /**
