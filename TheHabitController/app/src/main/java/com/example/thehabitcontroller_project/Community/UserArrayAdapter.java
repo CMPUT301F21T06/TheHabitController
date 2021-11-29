@@ -14,7 +14,7 @@ import java.util.List;
 
 public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.ViewHolder> {
 
-    interface ClickListener{
+    public interface ClickListener{
         public void onItemClick(int pos, User itemUser);
     }
 

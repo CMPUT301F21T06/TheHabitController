@@ -2,6 +2,7 @@ package com.example.thehabitcontroller_project;
 
 import static androidx.navigation.Navigation.findNavController;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.TaskStackBuilder;
 import androidx.navigation.NavController;
@@ -11,6 +12,10 @@ import androidx.navigation.ui.NavigationUI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.thehabitcontroller_project.Community.CommunityFragmentActivity;
 import com.example.thehabitcontroller_project.Community.User;
@@ -21,6 +26,17 @@ import com.example.thehabitcontroller_project.Habit.HabitsFragmentActivity;
 import com.example.thehabitcontroller_project.Home.HomeFragmentActivity;
 import com.example.thehabitcontroller_project.Login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+
+import org.w3c.dom.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author mainul1
@@ -37,6 +53,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     NavController navController;
+
+    final private String TAG = "MainActivity";
+    private ListenerRegistration lr;
+    private List<String> followReqId = new ArrayList<>();
+    private ArrayList<User> followReqUser=new ArrayList<>();
+    static int notifCount = 0;
+    private TextView tvNc;
+
 
     @Override
     /**
@@ -56,6 +80,43 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (User.getCurrentUser()==null) {
             signIn();
+        } else {
+            // notificationCounter = new NotificationCounter(findViewById(R.id.bell));
+            if (lr==null){
+                DocumentReference docRef= FirebaseFirestore.getInstance().collection("users")
+                        .document(User.getCurrentUser().getUserId());
+                lr=docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.w(TAG, "Database Listen failed.", error);
+                            return;
+                        }
+                        String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
+                                ? "Local" : "Server";
+                        if (snapshot!=null){
+                            // listen to remote changes only
+                            Log.d(TAG,"Remote database change occurred.");
+                            Log.d(TAG, source + " data: " + snapshot.getData().get("followReq"));
+                            if (!followReqId.equals(snapshot.getData().get("followReq"))){
+                                followReqId.clear();
+                                if (snapshot.get("followReq")!=null){
+                                    followReqId.addAll((List<String>) snapshot.get("followReq"));
+                                    Log.d(TAG,"FRI:"+followReqId);
+                                    setNotifCount(followReqId.size());
+                                    User.getCurrentUser().getFollowRequests(new User.UserListDataListener() {
+                                        @Override
+                                        public void onDataChange(ArrayList<User> result) {
+                                            followReqUser.clear();
+                                            followReqUser.addAll(result);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -108,5 +169,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu,menu);
+
+        View count = menu.findItem(R.id.miBell).getActionView();
+        tvNc=count.findViewById(R.id.tvCount);
+        tvNc.setText(String.valueOf(notifCount));
+        count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popUpClass = new PopupMenu();
+                popUpClass.showPopupWindow(findViewById(R.id.fragmentContainerView2), followReqUser);
+                Log.d(TAG,"UC:"+followReqUser.size());
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void setNotifCount(int n){
+        notifCount=n;
+        if (tvNc!=null){
+            tvNc.setText(String.valueOf(notifCount));
+        }
     }
 }
