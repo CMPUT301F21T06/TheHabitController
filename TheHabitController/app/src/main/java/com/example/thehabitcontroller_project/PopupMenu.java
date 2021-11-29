@@ -62,7 +62,7 @@ public class PopupMenu {
                         .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                User.requestFollow(itemUser);
+                                User.rejectFollow(itemUser);
                                 Toast.makeText(view.getContext(),
                                         "Declined.", Toast.LENGTH_SHORT).show();
                                 popupWindow.dismiss();
