@@ -117,6 +117,7 @@ public class EditEventFragmentActivity extends Fragment {
         comment.setText(selectedEvent.getComment());
         date.setText(selectedEvent.getFormattedDate());
 
+        // show photo if there is one
         if (selectedEvent.getPhoto() != null) {
             eventPhotoView.setImageBitmap(selectedEvent.getPhoto());
             eventPhotoView.setVisibility(View.VISIBLE);
