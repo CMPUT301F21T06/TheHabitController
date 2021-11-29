@@ -23,6 +23,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.example.thehabitcontroller_project.Habit.Habit;
 import com.example.thehabitcontroller_project.Helper.DatePicker;
 import com.example.thehabitcontroller_project.R;
 
@@ -59,6 +60,7 @@ public class EditEventFragmentActivity extends Fragment {
     static final int REQUEST_TAKE_PHOTO = 1;
     private String currentPhotoPath;
     private String habitTitle;
+    private Habit habit;
 
     public EditEventFragmentActivity() {
         // Required empty public constructor
@@ -108,6 +110,8 @@ public class EditEventFragmentActivity extends Fragment {
         // get the bundle from the event fragment activity that has the selected event info
         Bundle currEventBundle = getArguments();
         Event selectedEvent = currEventBundle.getParcelable("Event");
+        habit = currEventBundle.getParcelable("DailyHabit");
+
         // set the current page with that info
         title.setText(selectedEvent.getTitle());
         comment.setText(selectedEvent.getComment());
@@ -154,7 +158,15 @@ public class EditEventFragmentActivity extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().onBackPressed();
+                // start our cancel event bundle
+                Bundle cancelEventBundle = new Bundle();
+                cancelEventBundle.putParcelable("DailyHabit", habit);
+
+                // navigate back to event fragment activity
+                Navigation.findNavController(view).navigate(
+                        R.id.action_editEventFragmentActivity_to_events,
+                        cancelEventBundle
+                );
             }
         });
 
@@ -199,7 +211,7 @@ public class EditEventFragmentActivity extends Fragment {
 
                 String location = "";
 
-                String habitTitle = selectedEvent.getHabitTitle();
+                String habitTitle = habit.getTitle();
 
                 // put the new event in the bundle and the index of the event from the original list
                 editEventBundle.putParcelable(
@@ -207,6 +219,7 @@ public class EditEventFragmentActivity extends Fragment {
                         new Event(eventTitle, eventComment, inputDate, location, currentPhotoPath, habitTitle)
                 );
                 editEventBundle.putInt("index", currEventBundle.getInt("index"));
+                editEventBundle.putParcelable("DailyHabit", habit);
 
                 // navigate to the event fragment activity
                 Navigation.findNavController(view).navigate(
@@ -225,6 +238,7 @@ public class EditEventFragmentActivity extends Fragment {
 
                 // put the index of the event we want to delete
                 deleteEventBundle.putInt("deleteIndex", currEventBundle.getInt("index"));
+                deleteEventBundle.putParcelable("DailyHabit", habit);
 
                 // navigate back to event fragment activity
                 Navigation.findNavController(view).navigate(
