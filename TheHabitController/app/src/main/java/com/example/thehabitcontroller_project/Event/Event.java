@@ -59,7 +59,9 @@ public class Event implements Parcelable {
         title = in.readString();
         comment = in.readString();
         int maxLength = 20; // limit comment length to 20
-        comment = comment.substring(0, maxLength);
+        if (comment.length() > 20) {
+            comment = comment.substring(0, maxLength);
+        }
         dateEvent = new Date(in.readLong());
         location = "location"; // location not implemented
         photoString = in.readString();
@@ -112,7 +114,9 @@ public class Event implements Parcelable {
      */
     public void setComment(String comment) {
         int maxLength = 20; // limit comment length to 20
-        comment = comment.substring(0, maxLength);
+        if (comment.length() > 20) {
+            comment = comment.substring(0, maxLength);
+        }
         this.comment = comment;
     }
 
