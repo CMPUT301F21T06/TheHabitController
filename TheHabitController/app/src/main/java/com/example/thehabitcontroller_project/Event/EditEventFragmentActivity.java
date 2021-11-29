@@ -3,7 +3,11 @@ package com.example.thehabitcontroller_project.Event;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +19,16 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.example.thehabitcontroller_project.Habit.Habit;
 import com.example.thehabitcontroller_project.Helper.DatePicker;
 import com.example.thehabitcontroller_project.R;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,7 +57,10 @@ public class EditEventFragmentActivity extends Fragment {
     private Button cancelButton;
     private Button deleteButton;
 
-    private static final int requestCode = 1;
+    static final int REQUEST_TAKE_PHOTO = 1;
+    private String currentPhotoPath;
+    private String habitTitle;
+    private Habit habit;
 
     public EditEventFragmentActivity() {
         // Required empty public constructor
@@ -99,11 +110,14 @@ public class EditEventFragmentActivity extends Fragment {
         // get the bundle from the event fragment activity that has the selected event info
         Bundle currEventBundle = getArguments();
         Event selectedEvent = currEventBundle.getParcelable("Event");
+        habit = currEventBundle.getParcelable("DailyHabit");
+
         // set the current page with that info
         title.setText(selectedEvent.getTitle());
         comment.setText(selectedEvent.getComment());
         date.setText(selectedEvent.getFormattedDate());
 
+        // show photo if there is one
         if (selectedEvent.getPhoto() != null) {
             eventPhotoView.setImageBitmap(selectedEvent.getPhoto());
             eventPhotoView.setVisibility(View.VISIBLE);
@@ -137,27 +151,23 @@ public class EditEventFragmentActivity extends Fragment {
             public void onClick(View v)
             {
                 // Create the intent and open the camera
-                Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                if (photoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(photoIntent, requestCode);
-//                }
+                takePicture();
             }
         });
-
-        Bitmap image = photo;
-        if (image != null) {
-            try {
-                selectedEvent.setPhoto(image);
-            }
-            catch (IllegalArgumentException e) {
-            }
-        }
 
         // set listener for the cancel button; just go back
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().onBackPressed();
+                // start our cancel event bundle
+                Bundle cancelEventBundle = new Bundle();
+                cancelEventBundle.putParcelable("DailyHabit", habit);
+
+                // navigate back to event fragment activity
+                Navigation.findNavController(view).navigate(
+                        R.id.action_editEventFragmentActivity_to_events,
+                        cancelEventBundle
+                );
             }
         });
 
@@ -179,6 +189,18 @@ public class EditEventFragmentActivity extends Fragment {
                     }
                 }
 
+                // set empty photo if no photo taken
+                currentPhotoPath = "";
+//                String photoString = "";
+                // display photo if there is one
+                if (eventPhotoView.getDrawable() != null) {
+                    photo = ((BitmapDrawable) eventPhotoView.getDrawable()).getBitmap();
+
+//                    ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+//                    photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
+//                    photoString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+                }
+
                 // get the edited event's info
                 String eventTitle = title.getText().toString();
                 // if no event title is entered, return
@@ -190,14 +212,15 @@ public class EditEventFragmentActivity extends Fragment {
 
                 String location = "";
 
-                String habitTitle = selectedEvent.getHabitTitle();
+                String habitTitle = habit.getTitle();
 
                 // put the new event in the bundle and the index of the event from the original list
                 editEventBundle.putParcelable(
                         "editedEvent",
-                        new Event(eventTitle, eventComment, inputDate, location, selectedEvent.getPhotoString(), habitTitle)
+                        new Event(eventTitle, eventComment, inputDate, location, currentPhotoPath, habitTitle)
                 );
                 editEventBundle.putInt("index", currEventBundle.getInt("index"));
+                editEventBundle.putParcelable("DailyHabit", habit);
 
                 // navigate to the event fragment activity
                 Navigation.findNavController(view).navigate(
@@ -216,6 +239,7 @@ public class EditEventFragmentActivity extends Fragment {
 
                 // put the index of the event we want to delete
                 deleteEventBundle.putInt("deleteIndex", currEventBundle.getInt("index"));
+                deleteEventBundle.putParcelable("DailyHabit", habit);
 
                 // navigate back to event fragment activity
                 Navigation.findNavController(view).navigate(
@@ -238,20 +262,77 @@ public class EditEventFragmentActivity extends Fragment {
         }
     };
 
-    // method stores and displays the photo
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile("temp",".jpg",storageDir);
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+
+        // Create file
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(currentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        getActivity().sendBroadcast(mediaScanIntent);
+
+        return image;
+    }
+
+    private void takePicture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+//        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+        // Create the File where the photo should go
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException ex) {
+            // Error occurred while creating the File
+        }
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                    "com.example.android.fileprovider",
+                    photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+        }
+//        }
+    }
+
+    private void showPhoto() {
+        // Get the dimensions of the View
+        int targetW = eventPhotoView.getWidth();
+        int targetH = eventPhotoView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+        eventPhotoView.setImageBitmap(bitmap);
+    }
+
+    // Displays the photo
     public void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
 
-        // Match the pic id with requestCode
-        if (reqCode == requestCode) {
-
-            Bundle extras = data.getExtras();
-            // BitMap stores the image
-            photo = (Bitmap) extras.get("data");
-
-            // Display the image
-            eventPhotoView.setImageBitmap(photo);
-            eventPhotoView.setVisibility(View.VISIBLE);
+        if (reqCode == REQUEST_TAKE_PHOTO) {
+            showPhoto();
         }
     }
+
 }
