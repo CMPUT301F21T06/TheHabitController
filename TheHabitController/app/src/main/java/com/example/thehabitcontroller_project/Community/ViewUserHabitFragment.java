@@ -139,11 +139,7 @@ public class ViewUserHabitFragment extends Fragment implements HabitRecyclerAdap
 
     @Override
     public void onHabitClick(int position) {
-        // view habit event list
-        Bundle bundle = new Bundle();
-        Habit h = habitList.get(position);
-        bundle.putParcelable("Habit", h);
-        navController.navigate(R.id.action_viewUserHabitFragment_to_events, bundle);
+        return;
     }
 
     @Override

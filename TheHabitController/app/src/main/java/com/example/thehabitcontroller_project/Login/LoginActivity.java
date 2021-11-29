@@ -27,8 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         if (getSupportActionBar()!=null){
-            getSupportActionBar().setTitle(getString(R.string.app_name));
-            getSupportActionBar().setSubtitle("Sign In");
+            getSupportActionBar().setTitle("Sign In");
         }
         TextView tvRegister = findViewById(R.id.tvRegister);
         tvRegister.setText(HtmlCompat.fromHtml("Don't have an account? " +

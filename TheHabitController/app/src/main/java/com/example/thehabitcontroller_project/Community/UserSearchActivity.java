@@ -25,7 +25,7 @@ public class UserSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_search);
         if (getSupportActionBar()!=null){
-            getSupportActionBar().setSubtitle("User Search");
+            getSupportActionBar().setTitle("User Search");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         // init rvSearch
