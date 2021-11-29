@@ -83,7 +83,8 @@ public class HomeFragmentActivity extends Fragment {
         getActivity().setTitle("Today's Habits");
 
         // get the current user
-        currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser() != null ?
+                FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
 
         // get our initial field values
         NavController navController = Navigation.findNavController(view);
