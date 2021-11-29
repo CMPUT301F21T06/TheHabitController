@@ -241,7 +241,7 @@ public class EditEventFragmentActivity extends Fragment {
                 }
                 String eventComment = comment.getText().toString();
 
-                String location = "";
+                String location = ""; // not implemented
 
                 // add the photo to storage
                 if (photoBytes.length > 0) {

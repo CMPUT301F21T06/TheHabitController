@@ -24,8 +24,8 @@ public class Event implements Parcelable {
     private String title;
     private String comment; // optional comment up to 20 characters
     private Date dateEvent;
-    private String location; // temporary until implemented
-//    private Location location;
+    private String location; // location not implemented
+    //private Location location;
     private String photoString;
     private String habitTitle;
     public static final int MAX_PHOTO_SIZE = 1000000; // 1MB
@@ -63,10 +63,10 @@ public class Event implements Parcelable {
         comment = comment.substring(0, maxLength);
 
         dateEvent = new Date(in.readLong());
-        location = "location"; // temporary until implemented
-//        location = new Location("Home");
-//        location.setLongitude(0);
-//        location.setLatitude(0);
+        location = "location"; // location not implemented
+        //location = new Location("Home");
+        //location.setLongitude(0);
+        //location.setLatitude(0);
         photoString = in.readString();
         habitTitle = in.readString();
     }
