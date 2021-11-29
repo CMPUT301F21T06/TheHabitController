@@ -21,6 +21,7 @@ import com.example.thehabitcontroller_project.Event.Event;
 import com.example.thehabitcontroller_project.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -306,20 +307,18 @@ public class HabitsFragmentActivity extends Fragment implements HabitRecyclerAda
         }
 
         // delete all habit events related to this habit in the database
-        final CollectionReference relatedEvents = usersCr.document(h.getTitle()).collection("Events");
-        if (relatedEvents != null) {
-            relatedEvents.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                        Event e = (Event) doc.toObject(Event.class);
-                        if (e != null) {
-                            relatedEvents.document(e.getTitle()).delete();
-                        }
-                    }
+        final Task<QuerySnapshot> eventRef = userDr.collection("Events")
+                .whereEqualTo("habitTitle", h.getTitle())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot docs : queryDocumentSnapshots.getDocuments()) {
+                    Event e = (Event) docs.toObject(Event.class);
+                    userDr.collection("Events").document(e.getTitle()).delete();
                 }
-            });
-        }
+            }
+        });
     }
 
     /**

@@ -190,9 +190,11 @@ public class AddEventFragmentActivity extends Fragment{
                 usersCr.document(habit.getTitle()).update(habit.getTimesFinishedString(), FieldValue.increment(1));
 
                 // add the photo to storage
-                StorageReference userStorageRef = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                final StorageReference imageRef = userStorageRef.child(habit.getTitle()).child(event).child(photoString);
-                imageRef.putBytes(photoBytes);
+                if (photoBytes.length > 0) {
+                    StorageReference userStorageRef = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    final StorageReference imageRef = userStorageRef.child(habit.getTitle()).child(event).child(photoString);
+                    imageRef.putBytes(photoBytes);
+                }
 
                 // attach habit to the event
                 habitTitle = habit.getTitle();

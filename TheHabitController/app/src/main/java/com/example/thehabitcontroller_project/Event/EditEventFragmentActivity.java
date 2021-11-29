@@ -250,9 +250,11 @@ public class EditEventFragmentActivity extends Fragment {
                 String location = "";
 
                 // add the photo to storage
-                StorageReference userStorageRef = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                final StorageReference imageRef = userStorageRef.child(habit.getTitle()).child(eventTitle).child(photoString);
-                imageRef.putBytes(photoBytes);
+                if (photoBytes.length > 0) {
+                    StorageReference userStorageRef = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    final StorageReference imageRef = userStorageRef.child(habit.getTitle()).child(eventTitle).child(photoString);
+                    imageRef.putBytes(photoBytes);
+                }
 
                 String habitTitle = habit.getTitle();
 
