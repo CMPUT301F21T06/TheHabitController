@@ -42,7 +42,7 @@ public class HomeFragmentActivity extends Fragment {
 
     private final int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
     private FirebaseFirestore db;
-    private String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private String currentUser;
     private List<Habit> dailyHabitList;
     private ListView dailyHabitsListView;
     private DailyHabitArrayAdapter dailyHabitArrayAdapter;
@@ -81,6 +81,10 @@ public class HomeFragmentActivity extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // set the title
         getActivity().setTitle("Today's Habits");
+
+        // get the current user
+        currentUser = FirebaseAuth.getInstance().getCurrentUser() != null ?
+                FirebaseAuth.getInstance().getCurrentUser().getUid() : "E5zQK50iYiPeBkJR1vxfTe11cgH3";
 
         // get our initial field values
         NavController navController = Navigation.findNavController(view);
