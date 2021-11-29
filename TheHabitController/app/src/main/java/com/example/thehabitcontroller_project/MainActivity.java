@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     final private String TAG = "MainActivity";
     private ListenerRegistration lr;
     private List<String> followReqId = new ArrayList<>();
+    private ArrayList<User> followReqUser=new ArrayList<>();
     static int notifCount = 0;
     private TextView tvNc;
 
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
                                 ? "Local" : "Server";
-                        if (snapshot!=null&&!snapshot.getMetadata().hasPendingWrites()){
+                        if (snapshot!=null){
                             // listen to remote changes only
                             Log.d(TAG,"Remote database change occurred.");
                             Log.d(TAG, source + " data: " + snapshot.getData().get("followReq"));
@@ -103,6 +104,13 @@ public class MainActivity extends AppCompatActivity {
                                     followReqId.addAll((List<String>) snapshot.get("followReq"));
                                     Log.d(TAG,"FRI:"+followReqId);
                                     setNotifCount(followReqId.size());
+                                    User.getCurrentUser().getFollowRequests(new User.UserListDataListener() {
+                                        @Override
+                                        public void onDataChange(ArrayList<User> result) {
+                                            followReqUser.clear();
+                                            followReqUser.addAll(result);
+                                        }
+                                    });
                                 }
                             }
                         }
@@ -170,6 +178,14 @@ public class MainActivity extends AppCompatActivity {
         View count = menu.findItem(R.id.miBell).getActionView();
         tvNc=count.findViewById(R.id.tvCount);
         tvNc.setText(String.valueOf(notifCount));
+        count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popUpClass = new PopupMenu();
+                popUpClass.showPopupWindow(findViewById(R.id.fragmentContainerView2), followReqUser);
+                Log.d(TAG,"UC:"+followReqUser.size());
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 

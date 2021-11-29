@@ -457,8 +457,9 @@ public class User implements Parcelable, Comparable<User> {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
                     ArrayList<String> rs = (ArrayList<String>) task.getResult().getDocuments().get(0).get("followReq");
-                    if (rs.size()>0){
+                    if (rs!=null){
                         for (String item:rs){
+                            Log.d("FRQ",item);
                             User.getUserFromId(item, new UserDataListener() {
                                 @Override
                                 public void onDataChange(User result) {
@@ -482,12 +483,12 @@ public class User implements Parcelable, Comparable<User> {
     public void getFollowers(UserListDataListener dataListener){
         ArrayList<User> fList = new ArrayList<>();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Task t = db.collection("users").whereEqualTo("id",userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Task t = db.collection("users").document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()){
-                    ArrayList<String> rs = (ArrayList<String>) task.getResult().getDocuments().get(0).get("follow");
-                    if (rs.size()>0){
+                    ArrayList<String> rs = (ArrayList<String>) task.getResult().get("follow");
+                    if (rs!=null){
                         for (String item:rs){
                             User.getUserFromId(item, new UserDataListener() {
                                 @Override
