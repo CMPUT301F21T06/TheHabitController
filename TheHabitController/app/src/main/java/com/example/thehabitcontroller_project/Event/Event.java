@@ -26,7 +26,7 @@ public class Event implements Parcelable {
     private Date dateEvent;
     private String location; // temporary until implemented
 //    private Location location;
-    private Bitmap photo;
+//    private Bitmap photo;
     private String photoString;
     private String habitTitle;
     public static final int MAX_PHOTO_SIZE = 1000000; // 1MB
@@ -154,15 +154,15 @@ public class Event implements Parcelable {
     }
 
     /**
-     * The getter for the Event's photo
+     * Converter for the photo string into a {@link Bitmap}
      * @return The Event's photo as a bitmap {@link Bitmap} object
      */
-    public Bitmap getPhoto() {
+    public Bitmap photoStringToBitmap() {
         if (this.photoString != null) {
             byte [] decodedBytes = Base64.decode(this.photoString, 0);
-            this.photo = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
         }
-        return photo;
+        return null;
     }
 
     /**
@@ -177,7 +177,7 @@ public class Event implements Parcelable {
                 photo = Bitmap.createScaledBitmap(photo, (int) (photo.getWidth() * scaleFactor), (int) (photo.getHeight() * scaleFactor), true);
             }
 
-            this.photo = photo;
+//            this.photo = photo;
             ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
             photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
             this.photoString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);

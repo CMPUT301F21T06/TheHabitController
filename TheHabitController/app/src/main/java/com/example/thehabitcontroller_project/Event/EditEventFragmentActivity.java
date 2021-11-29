@@ -1,14 +1,18 @@
 package com.example.thehabitcontroller_project.Event;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
@@ -26,7 +34,12 @@ import androidx.navigation.Navigation;
 import com.example.thehabitcontroller_project.Habit.Habit;
 import com.example.thehabitcontroller_project.Helper.DatePicker;
 import com.example.thehabitcontroller_project.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -61,6 +74,8 @@ public class EditEventFragmentActivity extends Fragment {
     private String currentPhotoPath;
     private String habitTitle;
     private Habit habit;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+    final long ONE_MEGABYTE = 1024 * 1024;
 
     public EditEventFragmentActivity() {
         // Required empty public constructor
@@ -118,10 +133,18 @@ public class EditEventFragmentActivity extends Fragment {
         date.setText(selectedEvent.getFormattedDate());
 
         // show photo if there is one
-        if (selectedEvent.getPhoto() != null) {
-            eventPhotoView.setImageBitmap(selectedEvent.getPhoto());
-            eventPhotoView.setVisibility(View.VISIBLE);
-            photoString = selectedEvent.getPhotoString();
+        if (selectedEvent.getPhotoString() != null) {
+            StorageReference userStorageRef = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            final StorageReference imageRef = userStorageRef.child(habit.getTitle()).child(selectedEvent.getTitle()).child(selectedEvent.getPhotoString());
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    eventPhotoView.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                }
+            });
+//            eventPhotoView.setImageBitmap(selectedEvent.photoStringToBitmap());
+//            eventPhotoView.setVisibility(View.VISIBLE);
+//            photoString = selectedEvent.getPhotoString();
         }
 
         // set the onclicklistener for our set date button to pick a date
@@ -171,6 +194,17 @@ public class EditEventFragmentActivity extends Fragment {
             }
         });
 
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+                    showPhoto();
+                }
+            }
+        });
+
         // set listener for the save button
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,14 +225,17 @@ public class EditEventFragmentActivity extends Fragment {
 
                 // set empty photo if no photo taken
                 currentPhotoPath = "";
-//                String photoString = "";
+                String photoString = "";
+                // display photo if there is one
+                byte[] photoBytes = new byte[0];
                 // display photo if there is one
                 if (eventPhotoView.getDrawable() != null) {
                     photo = ((BitmapDrawable) eventPhotoView.getDrawable()).getBitmap();
 
-//                    ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
-//                    photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
-//                    photoString = Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+                    ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+                    photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOS);
+                    photoBytes = byteArrayOS.toByteArray();
+                    photoString = "image.png";
                 }
 
                 // get the edited event's info
@@ -212,12 +249,17 @@ public class EditEventFragmentActivity extends Fragment {
 
                 String location = "";
 
+                // add the photo to storage
+                StorageReference userStorageRef = FirebaseStorage.getInstance().getReference().child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                final StorageReference imageRef = userStorageRef.child(habit.getTitle()).child(eventTitle).child(photoString);
+                imageRef.putBytes(photoBytes);
+
                 String habitTitle = habit.getTitle();
 
                 // put the new event in the bundle and the index of the event from the original list
                 editEventBundle.putParcelable(
                         "editedEvent",
-                        new Event(eventTitle, eventComment, inputDate, location, currentPhotoPath, habitTitle)
+                        new Event(eventTitle, eventComment, inputDate, location, photoString, habitTitle)
                 );
                 editEventBundle.putInt("index", currEventBundle.getInt("index"));
                 editEventBundle.putParcelable("DailyHabit", habit);
@@ -271,19 +313,16 @@ public class EditEventFragmentActivity extends Fragment {
         currentPhotoPath = image.getAbsolutePath();
 
         // Create file
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(currentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        getActivity().sendBroadcast(mediaScanIntent);
+        MediaScannerConnection.scanFile(getContext(),
+                new String[] {f.toString()},
+                null, null);
 
         return image;
     }
 
     private void takePicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-//        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
         // Create the File where the photo should go
         File photoFile = null;
         try {
@@ -297,9 +336,8 @@ public class EditEventFragmentActivity extends Fragment {
                     "com.example.android.fileprovider",
                     photoFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            activityResultLauncher.launch(takePictureIntent);
         }
-//        }
     }
 
     private void showPhoto() {
@@ -320,19 +358,9 @@ public class EditEventFragmentActivity extends Fragment {
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
 
         Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
         eventPhotoView.setImageBitmap(bitmap);
-    }
-
-    // Displays the photo
-    public void onActivityResult(int reqCode, int resultCode, Intent data) {
-        super.onActivityResult(reqCode, resultCode, data);
-
-        if (reqCode == REQUEST_TAKE_PHOTO) {
-            showPhoto();
-        }
     }
 
 }
